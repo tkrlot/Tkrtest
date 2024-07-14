@@ -3,188 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bio Page</title>
+    <title>My CV</title>
     <style>
-        /* General styles */
+        /* CSS styles are embedded within the HTML for simplicity */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: #222; /* Dark mode background */
-            color: #fff; /* Light text */
-            overflow: hidden; /* Prevents scrollbars */
-            transition: background 0.3s ease;
-        }
-
-        .container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Header styles */
-        header {
-            text-align: center;
-            margin-top: 20vh;
-            animation: fadeInDown 1s ease;
-        }
-
-        header h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 1.5em;
-            opacity: 0.8;
-        }
-
-        /* Main content styles */
-        main {
-            padding: 20px;
-            animation: fadeInUp 1s ease;
-        }
-
-        section {
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 5px;
-        }
-
-        /* Footer styles */
-        footer {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-            opacity: 0.8;
-        }
-
-        /* Overlay for background image */
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            font-family: Arial, sans-serif;
             background-image: url('https://wallpapers-clan.com/wp-content/uploads/2024/02/bts-mysterious-blue-aesthetic-desktop-wallpaper-preview.jpg');
             background-size: cover;
-            filter: blur(0); /* Initial blur amount */
-            transition: filter 0.3s ease;
-            z-index: -1;
+            background-position: center;
+            filter: blur(0px); /* Initial blur value */
+            transition: filter 0.5s ease; /* Smooth transition for blur */
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-
-        /* Dark mode styles */
-        body.dark-mode {
-            background: #111; /* Dark mode background */
-            color: #ccc; /* Light text */
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            color: #333;
+            position: relative;
+            overflow: hidden; /* Ensures content within container does not overflow */
+            text-align: center;
+            animation: fadeIn 1s ease; /* Fade-in animation */
         }
-
-        /* Button styles */
+        .dark-mode {
+            background: rgba(0, 0, 0, 0.8); /* Dark mode background */
+            color: #fff;
+        }
+        .note {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            display: none; /* Hidden by default */
+            z-index: 999;
+            animation: fadeIn 0.5s ease; /* Fade-in animation */
+        }
         button {
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #007bff;
+            background: #007bff;
             color: #fff;
             border: none;
+            padding: 10px 20px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            transition: background 0.3s ease;
         }
-
         button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
         }
-
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Hi, I'm [Your Name]</h1>
-            <p>Welcome to my bio page!</p>
-        </header>
-        <main>
-            <section>
-                <h2>About Me</h2>
-                <p>Add your bio information here...</p>
-            </section>
-            <section>
-                <h2>Skills</h2>
-                <ul>
-                    <li>Skill 1</li>
-                    <li>Skill 2</li>
-                    <li>Skill 3</li>
-                    <!-- Add more skills as needed -->
-                </ul>
-            </section>
-            <section>
-                <h2>Contact Me</h2>
-                <button>Contact</button>
-                <button id="blur-control-button">Toggle Blur</button>
-            </section>
-        </main>
-        <footer>
-            <p>&copy; 2024 [Your Name]. All rights reserved.</p>
-        </footer>
-        <div class="overlay"></div>
+        <h1>Hello, I'm [Your Name]</h1>
+        <p>Welcome to my CV page.</p>
+        <button onclick="toggleNote()">Show Note</button>
+        <br><br>
+        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <br><br>
+        <label for="blurRange">Background Blur:</label>
+        <input type="range" id="blurRange" min="0" max="10" value="0" oninput="changeBlur(this.value)">
+    </div>
+
+    <!-- Note Popup -->
+    <div id="notePopup" class="note">
+        <h2>Note</h2>
+        <p>This is a note popup. You can customize its content.</p>
+        <button onclick="toggleNote()">Close</button>
     </div>
 
     <script>
-        const overlay = document.querySelector('.overlay');
-        let blurAmount = 0; // Initial blur amount
-
+        // Function to toggle dark mode
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
         }
 
-        function toggleBlur() {
-            blurAmount = blurAmount === 0 ? 5 : 0; // Toggle between 0 and 5 for blur amount
-            overlay.style.filter = `blur(${blurAmount}px)`;
+        // Function to toggle note popup
+        function toggleNote() {
+            var notePopup = document.getElementById('notePopup');
+            notePopup.style.display = (notePopup.style.display === 'block') ? 'none' : 'block';
         }
 
-        // Example: Change blur on button click
-        const blurControlButton = document.getElementById('blur-control-button');
-        blurControlButton.addEventListener('click', toggleBlur);
+        // Function to change background blur
+        function changeBlur(value) {
+            document.body.style.filter = `blur(${value}px)`;
+        }
     </script>
 </body>
 </html>
