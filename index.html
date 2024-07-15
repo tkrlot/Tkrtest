@@ -1,64 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam Style Example</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1b2838;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            text-align: center;
-            border: 1px solid #4b5962;
-            border-radius: 10px;
-            padding: 20px;
-            background-color: #2a475e;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            background-color: #007bff;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            text-decoration: none; /* Remove underline from link */
-            transition: background-color 0.3s ease;
-        }
-
-        .button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My CV</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f0f0f0; /* Default light mode background color */
+      color: #333; /* Default text color */
+    }
+    body.dark-mode {
+      background-color: #333; /* Dark mode background color */
+      color: #f0f0f0; /* Dark mode text color */
+    }
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+    p {
+      margin-bottom: 15px;
+    }
+    .btn-container {
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to Steam Style</h1>
-        <p>Experience gaming like never before.</p>
-        <a href="newpage.html" class="button">Explore Now</a>
-    </div>
+  <header>
+    <h1>John Doe's CV</h1>
+    <p>Front-end Developer</p>
+  </header>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>I am an experienced front-end developer with a passion for creating interactive web applications.</p>
+  </section>
+
+  <section id="experience">
+    <h2>Experience</h2>
+    <p>Previous work experience details here...</p>
+  </section>
+
+  <section id="education">
+    <h2>Education</h2>
+    <p>Education details here...</p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills</h2>
+    <p>Skills and competencies here...</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Contact information here...</p>
+  </section>
+
+  <div class="btn-container">
+    <button onclick="toggleDarkMode()" class="btn">Toggle Dark Mode</button>
+    <a href="#about" class="btn">About</a>
+    <a href="#experience" class="btn">Experience</a>
+    <a href="#education" class="btn">Education</a>
+    <a href="#skills" class="btn">Skills</a>
+    <a href="#contact" class="btn">Contact</a>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      const body = document.body;
+      body.classList.toggle('dark-mode');
+    }
+  </script>
+
 </body>
 </html>
