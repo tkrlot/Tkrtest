@@ -6,50 +6,59 @@ body {
 }
 
 header {
-    text-align: center;
-    padding: 20px;
-}
-
-header h1 {
-    margin: 10px 0;
-}
-
-header p {
-    margin: 5px 0;
-}
-
-main {
-    padding: 20px;
-}
-
-section {
-    margin-bottom: 20px;
-}
-
-.toggle-container {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
-    padding: 10px 20px;
+    padding: 1rem;
 }
 
-.toggle-text {
-    margin-right: 10px;
-}
-
-.theme-toggle {
-    background: none;
-    border: none;
-    font-size: 24px;
+.toggle {
     cursor: pointer;
 }
 
-body.light-mode {
+.profile {
+    text-align: center;
+    padding: 2rem;
+}
+
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+main {
+    padding: 2rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+h2 {
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.light-mode {
     background-color: #ffffff;
     color: #000000;
 }
 
-body.dark-mode {
+.dark-mode {
     background-color: #121212;
     color: #ffffff;
 }
