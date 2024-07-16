@@ -5,81 +5,180 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced CV</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .light-mode {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .dark-mode {
+            background-color: #181818;
+            color: #f1f1f1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .contact-info div {
+            flex: 1;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <h1>John Doe</h1>
-        <p>Full Stack Developer</p>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#education">Education</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+<body class="light-mode">
+    <div class="container">
+        <div class="header">
+            <h1>John Doe</h1>
+            <label class="toggle-switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
 
-    <main>
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <section class="personal-info">
+            <h2>Personal Information</h2>
+            <p><strong>Address:</strong> 123 Main Street, Hometown, USA</p>
+            <p><strong>Phone:</strong> (123) 456-7890</p>
+            <p><strong>Email:</strong> john.doe@example.com</p>
         </section>
 
-        <section id="experience">
-            <h2>Experience</h2>
-            <div class="job">
-                <h3>Senior Developer</h3>
-                <p>Company ABC</p>
-                <p>January 2018 - Present</p>
-                <p>Responsible for leading a team of developers and working on various projects.</p>
-            </div>
-            <!-- Add more job experiences here -->
-        </section>
-
-        <section id="skills">
+        <section class="skills">
             <h2>Skills</h2>
             <ul>
-                <li>HTML/CSS</li>
                 <li>JavaScript</li>
+                <li>Python</li>
+                <li>HTML & CSS</li>
                 <li>React</li>
                 <li>Node.js</li>
-                <!-- Add more skills here -->
             </ul>
         </section>
 
-        <section id="education">
+        <section class="experience">
+            <h2>Experience</h2>
+            <ul>
+                <li><strong>Senior Developer</strong> - XYZ Corp (2018 - Present)</li>
+                <li><strong>Developer</strong> - ABC Inc (2015 - 2018)</li>
+                <li><strong>Junior Developer</strong> - Web Solutions (2013 - 2015)</li>
+            </ul>
+        </section>
+
+        <section class="education">
             <h2>Education</h2>
-            <div class="education">
-                <h3>BS in Computer Science</h3>
-                <p>University XYZ</p>
-                <p>Graduated: 2015</p>
-            </div>
-            <!-- Add more education details here -->
+            <ul>
+                <li><strong>BSc in Computer Science</strong> - University of Somewhere (2009 - 2013)</li>
+            </ul>
         </section>
 
-        <section id="contact">
+        <section class="contact-info">
             <h2>Contact</h2>
-            <form>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                
-                <button type="submit">Send</button>
-            </form>
+            <div>
+                <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/johndoe" target="_blank">linkedin.com/in/johndoe</a></p>
+                <p><strong>GitHub:</strong> <a href="https://github.com/johndoe" target="_blank">github.com/johndoe</a></p>
+            </div>
         </section>
-    </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2024 John Doe</p>
-    </footer>
+    <script>
+        const toggleSwitch = document.getElementById('dark-mode-toggle');
+        const body = document.body;
 
-    <script src="scripts.js"></script>
+        toggleSwitch.addEventListener('change', () => {
+            if (toggleSwitch.checked) {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+            }
+        });
+    </script>
 </body>
 </html>
