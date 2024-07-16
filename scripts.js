@@ -1,21 +1,13 @@
-const toggleButton = document.getElementById('theme-toggle');
-const body = document.body;
-const toggleText = document.querySelector('.toggle-text');
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleIcon = document.getElementById('toggle-icon');
+    const body = document.body;
 
-toggleButton.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-    if (body.classList.contains('dark-mode')) {
-        toggleButton.textContent = '🌜';
-        toggleText.textContent = 'Dark Mode';
-    } else {
-        toggleButton.textContent = '🌞';
-        toggleText.textContent = 'Light Mode';
-    }
+    toggleIcon.addEventListener('click', function () {
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            toggleIcon.textContent = '🌜';
+        } else {
+            toggleIcon.textContent = '🌞';
+        }
+    });
 });
-
-// Initial theme check based on user preference
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    body.classList.add('dark-mode');
-    toggleButton.textContent = '🌜';
-    toggleText.textContent = 'Dark Mode';
-}
