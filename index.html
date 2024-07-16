@@ -7,52 +7,60 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <div class="toggle">
-            <span id="toggle-icon" class="icon">🌞</span>
-        </div>
-    </header>
-    <main>
+    <div class="toggle-container">
+        <label class="switch">
+            <input type="checkbox" id="dark-mode-toggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <div class="container">
+        <header>
+            <h1>John Doe</h1>
+            <p>Software Developer</p>
+        </header>
         <section class="profile">
-            <img src="profile.jpg" alt="Profile Picture" class="profile-pic">
-            <h1>Your Name</h1>
-            <p>Software Engineer | Web Developer</p>
-        </section>
-        <section class="contact">
-            <h2>Contact Information</h2>
-            <ul>
-                <li>Email: your.email@example.com</li>
-                <li>Phone: +123456789</li>
-                <li>LinkedIn: <a href="#">linkedin.com/in/yourprofile</a></li>
-            </ul>
+            <h2>Profile</h2>
+            <p>A highly skilled software developer with 10 years of experience in building web applications.</p>
         </section>
         <section class="experience">
             <h2>Experience</h2>
             <div class="job">
-                <h3>Job Title</h3>
-                <p>Company Name | Jan 2020 - Present</p>
-                <p>Description of your job responsibilities and achievements.</p>
+                <h3>Senior Developer at Tech Corp</h3>
+                <p>January 2020 - Present</p>
+                <ul>
+                    <li>Developed and maintained web applications using React and Node.js.</li>
+                    <li>Led a team of 5 developers in the Agile development process.</li>
+                </ul>
             </div>
             <div class="job">
-                <h3>Job Title</h3>
-                <p>Company Name | Jan 2018 - Dec 2019</p>
-                <p>Description of your job responsibilities and achievements.</p>
+                <h3>Developer at Web Solutions</h3>
+                <p>June 2015 - December 2019</p>
+                <ul>
+                    <li>Created custom websites for clients using HTML, CSS, and JavaScript.</li>
+                    <li>Improved website performance and user experience.</li>
+                </ul>
             </div>
-        </section>
-        <section class="education">
-            <h2>Education</h2>
-            <p>University Name | Degree | Year</p>
         </section>
         <section class="skills">
             <h2>Skills</h2>
             <ul>
-                <li>Skill 1</li>
-                <li>Skill 2</li>
-                <li>Skill 3</li>
-                <li>Skill 4</li>
+                <li>JavaScript</li>
+                <li>React</li>
+                <li>Node.js</li>
+                <li>HTML & CSS</li>
+                <li>Python</li>
             </ul>
         </section>
-    </main>
-    <script src="scripts.js"></script>
+        <section class="education">
+            <h2>Education</h2>
+            <p>Bachelor of Science in Computer Science, XYZ University, 2010-2014</p>
+        </section>
+        <section class="contact">
+            <h2>Contact</h2>
+            <p>Email: john.doe@example.com</p>
+            <p>Phone: (123) 456-7890</p>
+        </section>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
