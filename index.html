@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio Page - Dark Mode</title>
+    <title>바이오 페이지</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Nanum Gothic', sans-serif;
             background: #121212;
             color: #e0e0e0;
             margin: 0;
@@ -26,6 +26,10 @@
             width: 80%;
             max-width: 600px;
             text-align: center;
+            transition: transform 0.3s;
+        }
+        .container:hover {
+            transform: scale(1.02);
         }
         h1, h2 {
             margin: 0 0 1rem;
@@ -54,29 +58,29 @@
 </head>
 <body>
     <div class="container">
-        <h1>John Doe</h1>
-        <h2>Web Developer & Designer</h2>
+        <h1>홍길동</h1>
+        <h2>웹 개발자 & 디자이너</h2>
 
         <div class="section">
-            <h3>About Me</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam non urna euismod, facilisis erat ac, consequat arcu.</p>
+            <h3>소개</h3>
+            <p>안녕하세요, 저는 웹 개발과 디자인을 전문으로 하는 홍길동입니다. 최신 기술과 창의적인 디자인을 통해 사용자 친화적인 웹사이트를 만듭니다.</p>
         </div>
 
         <div class="section">
-            <h3>Skills</h3>
+            <h3>기술</h3>
             <p>HTML, CSS, JavaScript, React, Node.js</p>
         </div>
 
         <div class="section">
-            <h3>Contact</h3>
-            <p>Email: johndoe@example.com</p>
-            <button onclick="contactMe()">Get in Touch</button>
+            <h3>연락처</h3>
+            <p>이메일: honggildong@example.com</p>
+            <button onclick="contactMe()">연락하기</button>
         </div>
     </div>
 
     <script>
         function contactMe() {
-            alert('Thank you for reaching out! I will get back to you soon.');
+            alert('연락해 주셔서 감사합니다! 곧 연락드리겠습니다.');
         }
     </script>
 </body>
