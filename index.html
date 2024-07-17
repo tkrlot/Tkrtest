@@ -3,64 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced CV</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Bio Page - Dark Mode</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1, h2 {
+            margin: 0 0 1rem;
+        }
+        .section {
+            margin: 1rem 0;
+        }
+        button {
+            background: #6200ea;
+            color: #e0e0e0;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            border-radius: 25px;
+        }
+        button:hover {
+            background: #3700b3;
+            transform: scale(1.05);
+        }
+        button:focus {
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="toggle-container">
-        <label class="switch">
-            <input type="checkbox" id="dark-mode-toggle">
-            <span class="slider round"></span>
-        </label>
-    </div>
     <div class="container">
-        <header>
-            <h1>John Doe</h1>
-            <p>Software Developer</p>
-        </header>
-        <section class="profile">
-            <h2>Profile</h2>
-            <p>A highly skilled software developer with 10 years of experience in building web applications.</p>
-        </section>
-        <section class="experience">
-            <h2>Experience</h2>
-            <div class="job">
-                <h3>Senior Developer at Tech Corp</h3>
-                <p>January 2020 - Present</p>
-                <ul>
-                    <li>Developed and maintained web applications using React and Node.js.</li>
-                    <li>Led a team of 5 developers in the Agile development process.</li>
-                </ul>
-            </div>
-            <div class="job">
-                <h3>Developer at Web Solutions</h3>
-                <p>June 2015 - December 2019</p>
-                <ul>
-                    <li>Created custom websites for clients using HTML, CSS, and JavaScript.</li>
-                    <li>Improved website performance and user experience.</li>
-                </ul>
-            </div>
-        </section>
-        <section class="skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>JavaScript</li>
-                <li>React</li>
-                <li>Node.js</li>
-                <li>HTML & CSS</li>
-                <li>Python</li>
-            </ul>
-        </section>
-        <section class="education">
-            <h2>Education</h2>
-            <p>Bachelor of Science in Computer Science, XYZ University, 2010-2014</p>
-        </section>
-        <section class="contact">
-            <h2>Contact</h2>
-            <p>Email: john.doe@example.com</p>
-            <p>Phone: (123) 456-7890</p>
-        </section>
+        <h1>John Doe</h1>
+        <h2>Web Developer & Designer</h2>
+
+        <div class="section">
+            <h3>About Me</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam non urna euismod, facilisis erat ac, consequat arcu.</p>
+        </div>
+
+        <div class="section">
+            <h3>Skills</h3>
+            <p>HTML, CSS, JavaScript, React, Node.js</p>
+        </div>
+
+        <div class="section">
+            <h3>Contact</h3>
+            <p>Email: johndoe@example.com</p>
+            <button onclick="contactMe()">Get in Touch</button>
+        </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        function contactMe() {
+            alert('Thank you for reaching out! I will get back to you soon.');
+        }
+    </script>
 </body>
 </html>
