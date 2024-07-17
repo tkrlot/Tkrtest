@@ -1,87 +1,80 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>바이오 페이지</title>
+    <title>My Bio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap');
-
         body {
-            font-family: 'Nanum Gothic', sans-serif;
-            background: #121212;
-            color: #e0e0e0;
             margin: 0;
-            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
+
         .container {
-            background: #1e1e1e;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 80%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             max-width: 600px;
+            width: 100%;
             text-align: center;
-            transition: transform 0.3s;
         }
-        .container:hover {
-            transform: scale(1.02);
+
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 300;
         }
-        h1, h2 {
-            margin: 0 0 1rem;
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
-        .section {
-            margin: 1rem 0;
-        }
-        button {
-            background: #6200ea;
-            color: #e0e0e0;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            margin-top: 1rem;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.3s;
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
             border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.3s;
         }
-        button:hover {
-            background: #3700b3;
-            transform: scale(1.05);
+
+        .button:hover {
+            background: linear-gradient(45deg, #2575fc 0%, #6a11cb 100%);
+            transform: translateY(-2px);
         }
-        button:focus {
-            outline: none;
+
+        .signature {
+            margin-top: 40px;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1.2em;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>홍길동</h1>
-        <h2>웹 개발자 & 디자이너</h2>
-
-        <div class="section">
-            <h3>소개</h3>
-            <p>안녕하세요, 저는 웹 개발과 디자인을 전문으로 하는 홍길동입니다. 최신 기술과 창의적인 디자인을 통해 사용자 친화적인 웹사이트를 만듭니다.</p>
-        </div>
-
-        <div class="section">
-            <h3>기술</h3>
-            <p>HTML, CSS, JavaScript, React, Node.js</p>
-        </div>
-
-        <div class="section">
-            <h3>연락처</h3>
-            <p>이메일: honggildong@example.com</p>
-            <button onclick="contactMe()">연락하기</button>
+        <h1>About Me</h1>
+        <p>Hello! I am a passionate developer with a love for creating beautiful and functional websites. With a background in computer science, I enjoy solving complex problems and continuously learning new technologies.</p>
+        <p>When I am not coding, you can find me exploring new places, reading books, or experimenting with new recipes in the kitchen.</p>
+        <a href="#" class="button">Portfolio</a>
+        <a href="#" class="button">Contact</a>
+        <div class="signature">
+            서명: 사용자 이름
         </div>
     </div>
-
-    <script>
-        function contactMe() {
-            alert('연락해 주셔서 감사합니다! 곧 연락드리겠습니다.');
-        }
-    </script>
 </body>
 </html>
