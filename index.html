@@ -3,17 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signature Font Generator</title>
+    <title>Dark Themed CV</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Signature Font Generator</h1>
-        <textarea id="input-text" placeholder="Enter your text here"></textarea>
-        <div class="signature-text" id="signature-text"></div>
-        <button onclick="copyText()">Copy Text</button>
-    </div>
+    <div class="cv-container">
+        <header class="cv-header">
+            <h1>John Doe</h1>
+            <p>Full Stack Developer</p>
+        </header>
 
-    <script src="script.js"></script>
+        <section class="cv-summary">
+            <h2>Summary</h2>
+            <p>Passionate Full Stack Developer with 5+ years of experience in building scalable web applications. Adept at both frontend and backend technologies with a keen eye for detail and a commitment to delivering high-quality work.</p>
+        </section>
+
+        <section class="cv-skills">
+            <h2>Skills</h2>
+            <ul>
+                <li>JavaScript</li>
+                <li>React</li>
+                <li>Node.js</li>
+                <li>Python</li>
+                <li>SQL/NoSQL Databases</li>
+            </ul>
+        </section>
+
+        <section class="cv-experience">
+            <h2>Experience</h2>
+            <div class="job">
+                <h3>Senior Developer at XYZ Corp</h3>
+                <p><strong>Jan 2020 - Present</strong></p>
+                <p>Lead the development team in creating innovative solutions for e-commerce platforms.</p>
+                <button onclick="location.href='https://xyzcorp.com'">Company Website</button>
+            </div>
+            <div class="job">
+                <h3>Junior Developer at ABC Inc</h3>
+                <p><strong>Jun 2017 - Dec 2019</strong></p>
+                <p>Worked on various projects including internal tools and customer-facing applications.</p>
+                <button onclick="location.href='https://abcinc.com'">Company Website</button>
+            </div>
+        </section>
+
+        <section class="cv-education">
+            <h2>Education</h2>
+            <p><strong>Bachelor of Science in Computer Science</strong></p>
+            <p>University of Example - Graduated 2017</p>
+        </section>
+
+        <footer class="cv-footer">
+            <button onclick="location.href='mailto:john.doe@example.com'">Email</button>
+            <button onclick="location.href='https://linkedin.com/in/johndoe'">LinkedIn</button>
+            <button onclick="location.href='https://github.com/johndoe'">GitHub</button>
+        </footer>
+    </div>
 </body>
 </html>
