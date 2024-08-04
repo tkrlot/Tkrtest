@@ -3,58 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Themed CV</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>CV - Your Name</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #2c2c2c;
+            border-radius: 8px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffcc66;
+            margin: 0;
+        }
+
+        h2 {
+            color: #ffb74d;
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #ff5722;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #e64a19;
+        }
+
+        .button:active {
+            background-color: #d84315;
+        }
+
+        .skills ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .skills li {
+            background-color: #3c3c3c;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #b0bec5;
+        }
+    </style>
 </head>
 <body>
-    <div class="cv-container">
-        <header class="cv-header">
-            <h1>John Doe</h1>
-            <p>Full Stack Developer</p>
+    <div class="container">
+        <header>
+            <h1>Your Name</h1>
+            <p>Your Profession / Job Title</p>
         </header>
-
-        <section class="cv-summary">
-            <h2>Summary</h2>
-            <p>Passionate Full Stack Developer with 5+ years of experience in building scalable web applications. Adept at both frontend and backend technologies with a keen eye for detail and a commitment to delivering high-quality work.</p>
+        
+        <section>
+            <h2>About Me</h2>
+            <p>
+                A brief introduction about yourself. Mention your background, key achievements, and what makes you stand out.
+            </p>
         </section>
-
-        <section class="cv-skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>JavaScript</li>
-                <li>React</li>
-                <li>Node.js</li>
-                <li>Python</li>
-                <li>SQL/NoSQL Databases</li>
-            </ul>
-        </section>
-
-        <section class="cv-experience">
+        
+        <section>
             <h2>Experience</h2>
-            <div class="job">
-                <h3>Senior Developer at XYZ Corp</h3>
-                <p><strong>Jan 2020 - Present</strong></p>
-                <p>Lead the development team in creating innovative solutions for e-commerce platforms.</p>
-                <button onclick="location.href='https://xyzcorp.com'">Company Website</button>
-            </div>
-            <div class="job">
-                <h3>Junior Developer at ABC Inc</h3>
-                <p><strong>Jun 2017 - Dec 2019</strong></p>
-                <p>Worked on various projects including internal tools and customer-facing applications.</p>
-                <button onclick="location.href='https://abcinc.com'">Company Website</button>
+            <p>
+                <strong>Job Title 1</strong><br>
+                Company Name - Date Range<br>
+                Description of your responsibilities and achievements.
+            </p>
+            <p>
+                <strong>Job Title 2</strong><br>
+                Company Name - Date Range<br>
+                Description of your responsibilities and achievements.
+            </p>
+        </section>
+        
+        <section>
+            <h2>Skills</h2>
+            <div class="skills">
+                <ul>
+                    <li>Skill 1</li>
+                    <li>Skill 2</li>
+                    <li>Skill 3</li>
+                </ul>
             </div>
         </section>
-
-        <section class="cv-education">
-            <h2>Education</h2>
-            <p><strong>Bachelor of Science in Computer Science</strong></p>
-            <p>University of Example - Graduated 2017</p>
+        
+        <section>
+            <h2>Contact</h2>
+            <p>
+                Email: your.email@example.com<br>
+                Phone: (123) 456-7890
+            </p>
+            <a href="mailto:your.email@example.com" class="button">Email Me</a>
+            <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="button">LinkedIn</a>
+            <a href="https://github.com/yourprofile" target="_blank" class="button">GitHub</a>
         </section>
-
-        <footer class="cv-footer">
-            <button onclick="location.href='mailto:john.doe@example.com'">Email</button>
-            <button onclick="location.href='https://linkedin.com/in/johndoe'">LinkedIn</button>
-            <button onclick="location.href='https://github.com/johndoe'">GitHub</button>
+        
+        <footer>
+            <p>&copy; 2024 Your Name. All rights reserved.</p>
         </footer>
     </div>
 </body>
