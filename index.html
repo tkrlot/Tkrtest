@@ -3,50 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV - Your Name</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Dark Mode Video Player</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #video-player {
+            width: 80%;
+            max-width: 800px;
+            height: 450px;
+            border: 1px solid #333;
+            background: #000;
+        }
+        #volume-slider {
+            margin-top: 10px;
+            width: 80%;
+            max-width: 800px;
+        }
+        .volume-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        #password {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Your Name</h1>
-        <p>Job Title / Position</p>
-    </header>
-
-    <main>
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.</p>
-        </section>
-
-        <section id="experience">
-            <h2>Experience</h2>
-            <ul>
-                <li>Job Title - Company Name (Year - Year)</li>
-                <li>Job Title - Company Name (Year - Year)</li>
-            </ul>
-        </section>
-
-        <section id="skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>Skill 1</li>
-                <li>Skill 2</li>
-            </ul>
-        </section>
-
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>Email: your.email@example.com</p>
-            <p>Phone: (123) 456-7890</p>
-        </section>
-
-        <button id="toggle-theme">Toggle Dark/Light Theme</button>
-    </main>
-
-    <footer>
-        <p>© 2024 Your Name</p>
-    </footer>
-
-    <script src="scripts.js"></script>
+    <div id="player-container">
+        <iframe id="video-player" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=1" frameborder="0" allowfullscreen></iframe>
+        <label class="volume-label" for="volume-slider">Volume Control:</label>
+        <input id="volume-slider" type="range" min="0" max="100" value="50">
+        <div id="password">Password: <span id="password-value">Generating...</span></div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
