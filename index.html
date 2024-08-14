@@ -3,50 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Mode Video Player</title>
-    <style>
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        #player-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #video-player {
-            width: 80%;
-            max-width: 800px;
-            height: 450px;
-            border: 1px solid #333;
-            background: #000;
-        }
-        #volume-slider {
-            margin-top: 10px;
-            width: 80%;
-            max-width: 800px;
-        }
-        .volume-label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        #password {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
+    <title>Watch Together</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="player-container">
-        <iframe id="video-player" src="https://www.youtube.com/embed/0lMxeGw0PFc" frameborder="0" allowfullscreen></iframe>
-        <label class="volume-label" for="volume-slider">Volume Control:</label>
-        <input id="volume-slider" type="range" min="0" max="100" value="50">
-        <div id="password">Password: <span id="password-value">Generating...</span></div>
+    <h1>Watch Together</h1>
+    <div id="video-container">
+        <video id="video" width="800" controls>
+            <source src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
     </div>
+    <input type="text" id="video-url" placeholder="Enter video URL" />
+    <button id="load-video">Load Video</button>
     <script src="script.js"></script>
 </body>
 </html>
