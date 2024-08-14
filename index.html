@@ -3,19 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Together</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Media Player</title>
+    <style>
+        :root {
+            --background-color: #121212;
+            --primary-color: #1e1e1e;
+            --secondary-color: #333;
+            --text-color: #e0e0e0;
+            --button-color: #444;
+            --button-hover-color: #555;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        #video-player {
+            width: 100%;
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+
+        #video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            width: 100%;
+        }
+
+        #controls input {
+            padding: 10px;
+            border: 1px solid var(--text-color);
+            border-radius: 5px;
+            background: var(--primary-color);
+            color: var(--text-color);
+            width: 300px;
+        }
+
+        #controls button {
+            background-color: var(--button-color);
+            border: none;
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #controls button:hover {
+            background-color: var(--button-hover-color);
+        }
+
+        #queue {
+            margin-top: 20px;
+            color: var(--text-color);
+        }
+
+        #queue ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #queue li {
+            background: var(--secondary-color);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #queue li.active {
+            border: 2px solid #ff5722;
+        }
+
+        #queue li:hover {
+            background: #555;
+        }
+    </style>
 </head>
 <body>
-    <h1>Watch Together</h1>
-    <div id="video-container">
-        <video id="video" width="800" controls>
-            <source src="" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+    <div id="player-container">
+        <div id="video-player">
+            <iframe id="video" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div id="controls">
+            <input type="text" id="video-url" placeholder="Enter YouTube video URL" />
+            <button onclick="loadVideo()">Load Video</button>
+            <button onclick="skipVideo()">Skip Video</button>
+        </div>
+        <div id="queue">
+            <h3>Video Queue</h3>
+            <ul id="queue-list"></ul>
+        </div>
     </div>
-    <input type="text" id="video-url" placeholder="Enter video URL" />
-    <button id="load-video">Load Video</button>
-    <script src="script.js"></script>
+
+    <script>
+        const videoQueue = [];
+        let currentVideoIndex = -1;
+
+        function loadVideo() {
+            const url = document.getElementById('video-url').value;
+            if (url) {
+                videoQueue.push(url);
+                renderQueue();
+                if (videoQueue.length === 1) {
+                    playVideo(0);
+                }
+                document.getElementById('video-url').value = '';
+            }
+        }
+
+        function skipVideo() {
+            if (videoQueue.length > 0) {
+                videoQueue.shift();
+                renderQueue();
+                if (videoQueue.length > 0) {
+                    playVideo(0);
+                } else {
+                    document.getElementById('video').src = '';
+                }
+            }
+        }
+
+        function playVideo(index) {
+            if (index < 0 || index >= videoQueue.length) return;
+            currentVideoIndex = index;
+            const url = videoQueue[index];
+            const videoId = new URL(url).searchParams.get('v');
+            document.getElementById('video').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            renderQueue();
+        }
+
+        function renderQueue() {
+            const queueList = document.getElementById('queue-list');
+            queueList.innerHTML = '';
+            videoQueue.forEach((url, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = new URL(url).searchParams.get('v');
+                if (index === currentVideoIndex) {
+                    listItem.classList.add('active');
+                }
+                listItem.addEventListener('click', () => playVideo(index));
+                queueList.appendChild(listItem);
+            });
+        }
+
+        // Password generation and Discord webhook integration would go here
+
+    </script>
 </body>
 </html>
