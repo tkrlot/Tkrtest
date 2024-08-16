@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+<html lang="">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.5">
-<title>SyndiShanX - Class Updater</title>
+<title>Class Updater</title>
 <link rel="stylesheet" href="Fonts/Font_Awesome.min.css">
 <link rel="icon" href="Images/Global/Icon_Tab.webp">
 <link rel="stylesheet" href="GlobalCSS.css">
@@ -81,28 +82,33 @@
 .theme:hover {
 	background-color: #1e7dcb!important;
 }
+.signature {
+	margin-top: 20px;
+	color: #fff;
+	font: 16px Arial;
+	text-align: center;
+}
 </style>
 </head>
-<body lang="">
+<body>
 <div class="MainWrapper" align="center">
-<!--Nav Template End-->
-
 	<br><br><br>
 	<div class='container'><br><br>
 		<h3 style='color: #fff;'>Either Upload your Theme File or Paste it into the Textarea</h3>
+		<label for='theme-file' class='fileInputVisible theme' role='button'>Upload Theme File</label>
 		<label for='diff-file' class='fileInputVisible' role='button' style="margin-left: 5%;">Upload Diff File</label>
+		<input id='theme-file' type='file' class='fileInput' onchange='loadThemeFile()'style='color: #fff;'><br>
 		<input id='diff-file' type='file' class='fileInput' onchange='loadChangesFile()'style='color: #fff;'><br><br><br>
 		<font style='color: #fff; font: 18px Arial; font-weight: bold;' id='textAreaStatus'>If you use the Textarea, you have to Click off after you Paste your Theme for it to Update</font><br><br>
 		<textarea id='themeTextArea' onchange='updateClasses("textarea")'></textarea><br><br>
 		<button class='outputButton' onClick='updateClasses("file")'>Download Updated Theme</button>
 		<button class='outputButton' onClick='updateClasses("clipboard")'>Copy to Clipboard</button><br>
-		<div id='creditsURL'></div>
+		<div class="signature">BTS</div>
 		<font style='display: none;' id='diffFileURL'></font>
 		<font style='display: none;' id='diffFile'></font>
 	</div>
-
-<!--Nav Template Start-->
 </div>
+
 <script>
 async function loadChangesFileURL() {
 	const url = 'https://raw.githubusercontent.com/SyndiShanX/Update-Classes/main/Changes.txt'
@@ -117,7 +123,7 @@ async function loadChangesFileURL() {
 loadChangesFileURL()
 
 function loadChangesFile() {
-	input = document.getElementsByClassName('fileInput')[0];
+	const input = document.getElementById('diff-file');
 	
 	if (typeof window.FileReader !== 'function') {
 		alert("The file API isn't supported on this browser yet");
@@ -127,96 +133,93 @@ function loadChangesFile() {
 	if (!input) {
 		alert('Unable to find the fileInput element');
 	} else if (!input.files) {
-		alert("This browser doesn't seem to support the `files` property of file inputs");
+		alert("This browser doesn't seem to support the files property of file inputs");
 	} else {
-		file = input.files[0];
-		fr = new FileReader();
+		const file = input.files[0];
+		const fr = new FileReader();
 		fr.onload = function () { document.getElementById('diffFile').textContent = fr.result; }
 		fr.readAsText(file);
 	}
 }
 
 function loadThemeFile() {
-	var input, file, fr;
+	const input = document.getElementById('theme-file');
 	
 	if (typeof window.FileReader !== 'function') {
 		alert("The file API isn't supported on this browser yet");
 		return;
 	}
 	
-	input = document.getElementsByClassName('fileInput')[0];
-	
 	if (!input) {
 		alert('Unable to find the fileInput element');
 	} else if (!input.files) {
-		alert("This browser doesn't seem to support the `files` property of file inputs");
+		alert("This browser doesn't seem to support the files property of file inputs");
 	} else {
-		file = input.files[0];
-		fr = new FileReader();
+		const file = input.files[0];
+		const fr = new FileReader();
 		fr.onload = receivedText;
 		fr.readAsText(file);
 		outputName = file.name
 		themeFile = fr
-		document.getElementById('textAreaStatus').style = 'display: none;'
-		document.getElementById('themeTextArea').style = 'display: none;'
-		document.getElementsByTagName('br')[12].remove()
-		document.getElementsByTagName('br')[12].remove()
-		document.getElementsByTagName('br')[12].remove()
+		document.getElementById('textAreaStatus').style.display = 'none';
+		document.getElementById('themeTextArea').style.display = 'none';
 	}
-
-	async function receivedText(e) {
+	
+	function receivedText(e) {
 		let lines = e.target.result;
 	}
 }
 
 function updateClasses(outputMethod) {
-	var i = 0
-	if (document.getElementsByClassName('fileInput')[0].files.length != 1) {
-		rawText = document.getElementById('diffFileURL').innerHTML
+	let i = 0;
+	let rawText;
+	
+	if (document.getElementById('diff-file').files.length != 1) {
+		rawText = document.getElementById('diffFileURL').innerHTML;
 	} else {
-		rawText = document.getElementById('diffFile').innerHTML
+		rawText = document.getElementById('diffFile').innerHTML;
 	}
-	//console.log(rawText)
-	classNum = rawText.split('\n').length - 1
-	changesText = rawText.split('\n')
+	
+	const classNum = rawText.split('\n').length - 1;
+	const changesText = rawText.split('\n');
+	let themeText;
+	
 	if (outputMethod == 'textarea') {
-		themeText = document.getElementById('themeTextArea').value
+		themeText = document.getElementById('themeTextArea').value;
 	} else {
 		if (document.getElementById('themeTextArea').value != '') {
-			themeText = document.getElementById('themeTextArea').value
+			themeText = document.getElementById('themeTextArea').value;
 		} else {
-			themeText = themeFile.result
+			themeText = themeFile.result;
 		}
 	}
 	
 	while (i < classNum) {
-		class1 = changesText[i].split('\r')[0]
-		class2 = changesText[i + 1].split('\r')[0]
-	
-		themeText = themeText.replaceAll(class1, class2)
-	
-		i = i + 2
+		const class1 = changesText[i].split('\r')[0];
+		const class2 = changesText[i + 1].split('\r')[0];
+		themeText = themeText.replaceAll(class1, class2);
+		i = i + 2;
 	}
 	
 	if (outputMethod == 'textarea') {
-		document.getElementById('textAreaStatus').innerHTML = 'Updated!'
-		document.getElementById('themeTextArea').value = themeText
+		document.getElementById('textAreaStatus').innerHTML = 'Updated!';
+		document.getElementById('themeTextArea').value = themeText;
 	} else if (outputMethod == 'file') {
-		var synOutput = document.createElement('a');
+		const synOutput = document.createElement('a');
 		if (document.getElementById('themeTextArea').value != '') {
-			document.getElementById('textAreaStatus').innerHTML = 'Updated!'
-			document.getElementById('themeTextArea').value = themeText
-			outputName = 'Output.theme.css'
+			document.getElementById('textAreaStatus').innerHTML = 'Updated!';
+			document.getElementById('themeTextArea').value = themeText;
+			outputName = 'Output.theme.css';
 		}
 		const blob = new Blob([themeText], { type: 'text/plain' });
-		url = URL.createObjectURL(blob);
+		const url = URL.createObjectURL(blob);
 		synOutput.download = outputName;
 		synOutput.href = url;
 		synOutput.click();
 	} else if (outputMethod == 'clipboard') {
 		if (document.getElementById('themeTextArea').value != '') {
-			document.getElementById('textAreaStatus').innerHTML = 'Updated!'
-			document.getElementById('themeTextArea').value = themeText
+			document.getElementById('textAreaStatus').innerHTML = 'Updated!';
+			document.getElementById('themeTextArea').value = themeText;
 			navigator.clipboard.writeText(document.getElementById('themeTextArea').value);
 		} else {
 			navigator.clipboard.writeText(themeText);
@@ -228,4 +231,3 @@ function updateClasses(outputMethod) {
 <script src="GlobalNavbarFixer.js"></script>
 </body>
 </html>
-<!--Nav Template End-->
