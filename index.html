@@ -1,169 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV - Your Name</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #dcdcdc;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 80%;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #2c2c2c;
-            border-radius: 8px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #ffcc66;
-            margin: 0;
-        }
-
-        h2 {
-            color: #ffb74d;
-        }
-
-        section {
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #ff5722;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #e64a19;
-        }
-
-        .button:active {
-            background-color: #d84315;
-        }
-
-        .skills ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .skills li {
-            background-color: #3c3c3c;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #b0bec5;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.5">
+<title>SyndiShanX - Class Updater</title>
+<link rel="stylesheet" href="Fonts/Font_Awesome.min.css">
+<link rel="icon" href="Images/Global/Icon_Tab.webp">
+<link rel="stylesheet" href="GlobalCSS.css">
+<style type="text/css">
+.fileInputVisible, .outputButton {
+	background-color: rgba(255, 255, 255, 0.25);
+	padding: 28px;
+	color: #fff;
+	font: 28px Arial;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid #5c5c5c;
+	border-radius: 8px;
+	cursor: pointer;
+}
+.outputButton {
+	padding: 18px;
+	margin: 10px;
+	color: #fff;
+	font: 18px Arial;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid #5c5c5c;
+	border-radius: 8px;
+	cursor: pointer;
+}
+.fileInputVisible:hover, .outputButton:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+	border: 1px solid #c0c0c0;
+}
+.fileInputVisible:disabled, .outputButton:disabled {
+	background-color: rgba(255, 255, 255, 0.05);
+	border: 1px solid #1a1a1a;
+	cursor: not-allowed;
+}
+.fileInput {
+	display: none;
+}
+.container {
+	background-image: var(--bgImageDark)!important;
+	background-clip: border-box!important;
+	background-origin: padding-box!important;
+	background-attachment: scroll!important;
+	background-repeat: repeat!important;
+	background-size: auto!important;
+	background-position: left top!important;
+	border: 1px solid #5c5c5c;
+	border-radius: 8px;
+	min-width: 800px;
+	width: 50%;
+	height: fit-content;
+	padding-bottom: 50px;
+}
+#themeTextArea {
+	background-image: var(--bgImage)!important;
+	background-clip: border-box!important;
+	background-origin: padding-box!important;
+	background-attachment: scroll!important;
+	background-repeat: repeat!important;
+	background-size: auto!important;
+	background-position: left top!important;
+	border: 1px solid #5c5c5c;
+	border-radius: 8px;
+	width: 80%;
+	height: 200px;
+	color: #fff;
+	resize: none;
+}
+.link {
+	color: #35afea;
+	font-weight: bold;
+}
+.theme {
+	background-color: #35afea!important;
+}
+.theme:hover {
+	background-color: #1e7dcb!important;
+}
+</style>
 </head>
+<body lang="">
+<div class="MainWrapper" align="center">
+<!--Nav Template End-->
 
-<body>
-    <div class="container" id="cv-content">
-        <header>
-            <h1>Your Name</h1>
-            <p>Your Profession / Job Title</p>
-        </header>
+	<br><br><br>
+	<div class='container'><br><br>
+		<h3 style='color: #fff;'>Either Upload your Theme File or Paste it into the Textarea</h3>
+		<label for='diff-file' class='fileInputVisible' role='button' style="margin-left: 5%;">Upload Diff File</label>
+		<input id='diff-file' type='file' class='fileInput' onchange='loadChangesFile()'style='color: #fff;'><br><br><br>
+		<font style='color: #fff; font: 18px Arial; font-weight: bold;' id='textAreaStatus'>If you use the Textarea, you have to Click off after you Paste your Theme for it to Update</font><br><br>
+		<textarea id='themeTextArea' onchange='updateClasses("textarea")'></textarea><br><br>
+		<button class='outputButton' onClick='updateClasses("file")'>Download Updated Theme</button>
+		<button class='outputButton' onClick='updateClasses("clipboard")'>Copy to Clipboard</button><br>
+		<div id='creditsURL'></div>
+		<font style='display: none;' id='diffFileURL'></font>
+		<font style='display: none;' id='diffFile'></font>
+	</div>
 
-        <section>
-            <h2>About Me</h2>
-            <p>
-                A brief introduction about yourself. Mention your background, key achievements, and what makes you stand out.
-            </p>
-        </section>
+<!--Nav Template Start-->
+</div>
+<script>
+async function loadChangesFileURL() {
+	const url = 'https://raw.githubusercontent.com/SyndiShanX/Update-Classes/main/Changes.txt'
+	let rawFile = await fetch(url);
+	let rawText = await rawFile.text();
+	document.getElementById('diffFileURL').innerHTML = rawText
+	const creditsURL = 'https://raw.githubusercontent.com/SyndiShanX/Update-Classes/main/Credits.txt'
+	let rawCreditsFile = await fetch(creditsURL);
+	let rawCreditsText = await rawCreditsFile.text();
+	document.getElementById('creditsURL').innerHTML = rawCreditsText
+}
+loadChangesFileURL()
 
-        <section>
-            <h2>Experience</h2>
-            <p>
-                <strong>Job Title 1</strong><br>
-                Company Name - Date Range<br>
-                Description of your responsibilities and achievements.
-            </p>
-            <p>
-                <strong>Job Title 2</strong><br>
-                Company Name - Date Range<br>
-                Description of your responsibilities and achievements.
-            </p>
-        </section>
+function loadChangesFile() {
+	input = document.getElementsByClassName('fileInput')[0];
+	
+	if (typeof window.FileReader !== 'function') {
+		alert("The file API isn't supported on this browser yet");
+		return;
+	}
+	
+	if (!input) {
+		alert('Unable to find the fileInput element');
+	} else if (!input.files) {
+		alert("This browser doesn't seem to support the `files` property of file inputs");
+	} else {
+		file = input.files[0];
+		fr = new FileReader();
+		fr.onload = function () { document.getElementById('diffFile').textContent = fr.result; }
+		fr.readAsText(file);
+	}
+}
 
-        <section>
-            <h2>Skills</h2>
-            <div class="skills">
-                <ul>
-                    <li>Skill 1</li>
-                    <li>Skill 2</li>
-                    <li>Skill 3</li>
-                </ul>
-            </div>
-        </section>
+function loadThemeFile() {
+	var input, file, fr;
+	
+	if (typeof window.FileReader !== 'function') {
+		alert("The file API isn't supported on this browser yet");
+		return;
+	}
+	
+	input = document.getElementsByClassName('fileInput')[0];
+	
+	if (!input) {
+		alert('Unable to find the fileInput element');
+	} else if (!input.files) {
+		alert("This browser doesn't seem to support the `files` property of file inputs");
+	} else {
+		file = input.files[0];
+		fr = new FileReader();
+		fr.onload = receivedText;
+		fr.readAsText(file);
+		outputName = file.name
+		themeFile = fr
+		document.getElementById('textAreaStatus').style = 'display: none;'
+		document.getElementById('themeTextArea').style = 'display: none;'
+		document.getElementsByTagName('br')[12].remove()
+		document.getElementsByTagName('br')[12].remove()
+		document.getElementsByTagName('br')[12].remove()
+	}
 
-        <section>
-            <h2>Contact</h2>
-            <p>
-                Email: your.email@example.com<br>
-                Phone: (123) 456-7890
-            </p>
-            <a href="mailto:your.email@example.com" class="button">Email Me</a>
-            <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="button">LinkedIn</a>
-            <a href="https://github.com/yourprofile" target="_blank" class="button">GitHub</a>
-        </section>
+	async function receivedText(e) {
+		let lines = e.target.result;
+	}
+}
 
-        <footer>
-            <p>&copy; 2024 Your Name. All rights reserved.</p>
-        </footer>
-    </div>
-
-    <div style="text-align: center; margin-top: 20px;">
-        <button id="download-pdf" class="button">Download CV as PDF</button>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        document.getElementById('download-pdf').addEventListener('click', function () {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // Hide the download button before generating the PDF
-            document.getElementById('download-pdf').style.display = 'none';
-
-            // Generate the PDF
-            doc.html(document.getElementById('cv-content'), {
-                callback: function (doc) {
-                    doc.save('CV_Your_Name.pdf');
-                    
-                    // Show the download button after the PDF is generated
-                    document.getElementById('download-pdf').style.display = 'block';
-                },
-                x: 10,
-                y: 10
-            });
-        });
-    </script>
+function updateClasses(outputMethod) {
+	var i = 0
+	if (document.getElementsByClassName('fileInput')[0].files.length != 1) {
+		rawText = document.getElementById('diffFileURL').innerHTML
+	} else {
+		rawText = document.getElementById('diffFile').innerHTML
+	}
+	//console.log(rawText)
+	classNum = rawText.split('\n').length - 1
+	changesText = rawText.split('\n')
+	if (outputMethod == 'textarea') {
+		themeText = document.getElementById('themeTextArea').value
+	} else {
+		if (document.getElementById('themeTextArea').value != '') {
+			themeText = document.getElementById('themeTextArea').value
+		} else {
+			themeText = themeFile.result
+		}
+	}
+	
+	while (i < classNum) {
+		class1 = changesText[i].split('\r')[0]
+		class2 = changesText[i + 1].split('\r')[0]
+	
+		themeText = themeText.replaceAll(class1, class2)
+	
+		i = i + 2
+	}
+	
+	if (outputMethod == 'textarea') {
+		document.getElementById('textAreaStatus').innerHTML = 'Updated!'
+		document.getElementById('themeTextArea').value = themeText
+	} else if (outputMethod == 'file') {
+		var synOutput = document.createElement('a');
+		if (document.getElementById('themeTextArea').value != '') {
+			document.getElementById('textAreaStatus').innerHTML = 'Updated!'
+			document.getElementById('themeTextArea').value = themeText
+			outputName = 'Output.theme.css'
+		}
+		const blob = new Blob([themeText], { type: 'text/plain' });
+		url = URL.createObjectURL(blob);
+		synOutput.download = outputName;
+		synOutput.href = url;
+		synOutput.click();
+	} else if (outputMethod == 'clipboard') {
+		if (document.getElementById('themeTextArea').value != '') {
+			document.getElementById('textAreaStatus').innerHTML = 'Updated!'
+			document.getElementById('themeTextArea').value = themeText
+			navigator.clipboard.writeText(document.getElementById('themeTextArea').value);
+		} else {
+			navigator.clipboard.writeText(themeText);
+		}
+	}
+}
+</script>
+<script src="GlobalNavbar.js"></script>
+<script src="GlobalNavbarFixer.js"></script>
 </body>
-
 </html>
+<!--Nav Template End-->
