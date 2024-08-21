@@ -1,233 +1,195 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=0.5">
-<title>Class Updater</title>
-<link rel="stylesheet" href="Fonts/Font_Awesome.min.css">
-<link rel="icon" href="Images/Global/Icon_Tab.webp">
-<link rel="stylesheet" href="GlobalCSS.css">
-<style type="text/css">
-.fileInputVisible, .outputButton {
-	background-color: rgba(255, 255, 255, 0.25);
-	padding: 28px;
-	color: #fff;
-	font: 28px Arial;
-	font-weight: bold;
-	text-align: center;
-	border: 1px solid #5c5c5c;
-	border-radius: 8px;
-	cursor: pointer;
-}
-.outputButton {
-	padding: 18px;
-	margin: 10px;
-	color: #fff;
-	font: 18px Arial;
-	font-weight: bold;
-	text-align: center;
-	border: 1px solid #5c5c5c;
-	border-radius: 8px;
-	cursor: pointer;
-}
-.fileInputVisible:hover, .outputButton:hover {
-	background-color: rgba(255, 255, 255, 0.15);
-	border: 1px solid #c0c0c0;
-}
-.fileInputVisible:disabled, .outputButton:disabled {
-	background-color: rgba(255, 255, 255, 0.05);
-	border: 1px solid #1a1a1a;
-	cursor: not-allowed;
-}
-.fileInput {
-	display: none;
-}
-.container {
-	background-image: var(--bgImageDark)!important;
-	background-clip: border-box!important;
-	background-origin: padding-box!important;
-	background-attachment: scroll!important;
-	background-repeat: repeat!important;
-	background-size: auto!important;
-	background-position: left top!important;
-	border: 1px solid #5c5c5c;
-	border-radius: 8px;
-	min-width: 800px;
-	width: 50%;
-	height: fit-content;
-	padding-bottom: 50px;
-}
-#themeTextArea {
-	background-image: var(--bgImage)!important;
-	background-clip: border-box!important;
-	background-origin: padding-box!important;
-	background-attachment: scroll!important;
-	background-repeat: repeat!important;
-	background-size: auto!important;
-	background-position: left top!important;
-	border: 1px solid #5c5c5c;
-	border-radius: 8px;
-	width: 80%;
-	height: 200px;
-	color: #fff;
-	resize: none;
-}
-.link {
-	color: #35afea;
-	font-weight: bold;
-}
-.theme {
-	background-color: #35afea!important;
-}
-.theme:hover {
-	background-color: #1e7dcb!important;
-}
-.signature {
-	margin-top: 20px;
-	color: #fff;
-	font: 16px Arial;
-	text-align: center;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Dark Mode CV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s, color 0.5s;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        h1,
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #bb86fc;
+        }
+
+        h3 {
+            color: #03dac6;
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 12px 25px;
+            background-color: #03dac6;
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #018786;
+            color: #ffffff;
+        }
+
+        .btn:active {
+            background-color: #03dac6;
+            color: #121212;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .section {
+            margin: 30px 0;
+        }
+
+        .signature {
+            font-family: 'Nanum Pen Script', cursive;
+            font-size: 28px;
+            text-align: right;
+            margin-top: 50px;
+            color: #03dac6;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .footer .date-time {
+            color: #bb86fc;
+        }
+
+        .social-icons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #03dac6;
+            font-size: 24px;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #bb86fc;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .container {
+            animation: slideIn 1s ease-out;
+        }
+    </style>
 </head>
+
 <body>
-<div class="MainWrapper" align="center">
-	<br><br><br>
-	<div class='container'><br><br>
-		<h3 style='color: #fff;'>Either Upload your Theme File or Paste it into the Textarea</h3>
-		<label for='theme-file' class='fileInputVisible theme' role='button'>Upload Theme File</label>
-		<label for='diff-file' class='fileInputVisible' role='button' style="margin-left: 5%;">Upload Diff File</label>
-		<input id='theme-file' type='file' class='fileInput' onchange='loadThemeFile()'style='color: #fff;'><br>
-		<input id='diff-file' type='file' class='fileInput' onchange='loadChangesFile()'style='color: #fff;'><br><br><br>
-		<font style='color: #fff; font: 18px Arial; font-weight: bold;' id='textAreaStatus'>If you use the Textarea, you have to Click off after you Paste your Theme for it to Update</font><br><br>
-		<textarea id='themeTextArea' onchange='updateClasses("textarea")'></textarea><br><br>
-		<button class='outputButton' onClick='updateClasses("file")'>Download Updated Theme</button>
-		<button class='outputButton' onClick='updateClasses("clipboard")'>Copy to Clipboard</button><br>
-		<div class="signature">BTS</div>
-		<font style='display: none;' id='diffFileURL'></font>
-		<font style='display: none;' id='diffFile'></font>
-	</div>
-</div>
+    <div class="container">
+        <h1>John Doe</h1>
+        <h2>Software Developer</h2>
 
-<script>
-async function loadChangesFileURL() {
-	const url = 'https://raw.githubusercontent.com/SyndiShanX/Update-Classes/main/Changes.txt'
-	let rawFile = await fetch(url);
-	let rawText = await rawFile.text();
-	document.getElementById('diffFileURL').innerHTML = rawText
-	const creditsURL = 'https://raw.githubusercontent.com/SyndiShanX/Update-Classes/main/Credits.txt'
-	let rawCreditsFile = await fetch(creditsURL);
-	let rawCreditsText = await rawCreditsFile.text();
-	document.getElementById('creditsURL').innerHTML = rawCreditsText
-}
-loadChangesFileURL()
+        <div class="section">
+            <h3>About Me</h3>
+            <p>Passionate software developer with 5+ years of experience in building web applications.</p>
+        </div>
 
-function loadChangesFile() {
-	const input = document.getElementById('diff-file');
-	
-	if (typeof window.FileReader !== 'function') {
-		alert("The file API isn't supported on this browser yet");
-		return;
-	}
-	
-	if (!input) {
-		alert('Unable to find the fileInput element');
-	} else if (!input.files) {
-		alert("This browser doesn't seem to support the files property of file inputs");
-	} else {
-		const file = input.files[0];
-		const fr = new FileReader();
-		fr.onload = function () { document.getElementById('diffFile').textContent = fr.result; }
-		fr.readAsText(file);
-	}
-}
+        <div class="section">
+            <h3>Experience</h3>
+            <p>Senior Developer at XYZ Corp</p>
+            <p>Led the development of major projects, implemented key features, and mentored junior developers.</p>
+        </div>
 
-function loadThemeFile() {
-	const input = document.getElementById('theme-file');
-	
-	if (typeof window.FileReader !== 'function') {
-		alert("The file API isn't supported on this browser yet");
-		return;
-	}
-	
-	if (!input) {
-		alert('Unable to find the fileInput element');
-	} else if (!input.files) {
-		alert("This browser doesn't seem to support the files property of file inputs");
-	} else {
-		const file = input.files[0];
-		const fr = new FileReader();
-		fr.onload = receivedText;
-		fr.readAsText(file);
-		outputName = file.name
-		themeFile = fr
-		document.getElementById('textAreaStatus').style.display = 'none';
-		document.getElementById('themeTextArea').style.display = 'none';
-	}
-	
-	function receivedText(e) {
-		let lines = e.target.result;
-	}
-}
+        <div class="section">
+            <h3>Skills</h3>
+            <p>JavaScript, HTML, CSS, React, Node.js</p>
+        </div>
 
-function updateClasses(outputMethod) {
-	let i = 0;
-	let rawText;
-	
-	if (document.getElementById('diff-file').files.length != 1) {
-		rawText = document.getElementById('diffFileURL').innerHTML;
-	} else {
-		rawText = document.getElementById('diffFile').innerHTML;
-	}
-	
-	const classNum = rawText.split('\n').length - 1;
-	const changesText = rawText.split('\n');
-	let themeText;
-	
-	if (outputMethod == 'textarea') {
-		themeText = document.getElementById('themeTextArea').value;
-	} else {
-		if (document.getElementById('themeTextArea').value != '') {
-			themeText = document.getElementById('themeTextArea').value;
-		} else {
-			themeText = themeFile.result;
-		}
-	}
-	
-	while (i < classNum) {
-		const class1 = changesText[i].split('\r')[0];
-		const class2 = changesText[i + 1].split('\r')[0];
-		themeText = themeText.replaceAll(class1, class2);
-		i = i + 2;
-	}
-	
-	if (outputMethod == 'textarea') {
-		document.getElementById('textAreaStatus').innerHTML = 'Updated!';
-		document.getElementById('themeTextArea').value = themeText;
-	} else if (outputMethod == 'file') {
-		const synOutput = document.createElement('a');
-		if (document.getElementById('themeTextArea').value != '') {
-			document.getElementById('textAreaStatus').innerHTML = 'Updated!';
-			document.getElementById('themeTextArea').value = themeText;
-			outputName = 'Output.theme.css';
-		}
-		const blob = new Blob([themeText], { type: 'text/plain' });
-		const url = URL.createObjectURL(blob);
-		synOutput.download = outputName;
-		synOutput.href = url;
-		synOutput.click();
-	} else if (outputMethod == 'clipboard') {
-		if (document.getElementById('themeTextArea').value != '') {
-			document.getElementById('textAreaStatus').innerHTML = 'Updated!';
-			document.getElementById('themeTextArea').value = themeText;
-			navigator.clipboard.writeText(document.getElementById('themeTextArea').value);
-		} else {
-			navigator.clipboard.writeText(themeText);
-		}
-	}
-}
-</script>
-<script src="GlobalNavbar.js"></script>
-<script src="GlobalNavbarFixer.js"></script>
+        <div class="section">
+            <a href="mailto:john.doe@example.com" class="btn">Contact Me</a>
+        </div>
+
+        <div class="signature">
+            김철수
+        </div>
+
+        <div class="social-icons">
+            <a href="https://linkedin.com/in/johndoe" target="_blank">LinkedIn</a>
+            <a href="https://github.com/johndoe" target="_blank">GitHub</a>
+            <a href="https://twitter.com/johndoe" target="_blank">Twitter</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span class="date-time" id="date-time"></span>
+    </div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+            const timeString = now.toLocaleTimeString('en-US', options);
+            const dateString = now.toDateString();
+            document.getElementById('date-time').textContent = `${dateString} ${timeString}`;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
 </body>
+
 </html>
