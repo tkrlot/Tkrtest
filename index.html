@@ -103,6 +103,12 @@
             color: #bb86fc;
         }
 
+        .footer .last-updated {
+            color: #03dac6;
+            margin-top: 10px;
+            display: block;
+        }
+
         .social-icons {
             text-align: center;
             margin-top: 20px;
@@ -118,6 +124,38 @@
 
         .social-icons a:hover {
             color: #bb86fc;
+        }
+
+        /* Language Switch */
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: #03dac6;
+            color: #121212;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .lang-switch:hover {
+            background-color: #018786;
+        }
+
+        .lang-switch:active {
+            background-color: #03dac6;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Weather Icon */
+        .weather-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #03dac6;
         }
 
         /* Animations */
@@ -136,11 +174,39 @@
         .container {
             animation: slideIn 1s ease-out;
         }
+
+        /* Arabic Styles */
+        body.arabic {
+            direction: rtl;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .arabic h1,
+        .arabic h2,
+        .arabic h3 {
+            border-bottom: 2px solid #333;
+        }
+
+        .arabic p {
+            line-height: 1.8;
+        }
+
+        .arabic .btn {
+            background-color: #03dac6;
+            color: #121212;
+        }
+
+        .arabic .footer .date-time,
+        .arabic .footer .last-updated {
+            color: #03dac6;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container english">
+        <div class="lang-switch" onclick="toggleLanguage()">العربية</div>
+        <div class="weather-icon" id="weather"></div>
         <h1>John Doe</h1>
         <h2>Software Developer</h2>
 
@@ -175,20 +241,87 @@
         </div>
     </div>
 
+    <div class="container arabic" style="display: none;">
+        <div class="lang-switch" onclick="toggleLanguage()">English</div>
+        <div class="weather-icon" id="weather-arabic"></div>
+        <h1>جون دو</h1>
+        <h2>مطوّر برمجيات</h2>
+
+        <div class="section">
+            <h3>نبذة عني</h3>
+            <p>مطوّر برمجيات شغوف يتمتع بخبرة تزيد عن 5 سنوات في بناء تطبيقات الويب.</p>
+        </div>
+
+        <div class="section">
+            <h3>الخبرة</h3>
+            <p>مطوّر أول في شركة XYZ</p>
+            <p>قاد تطوير المشاريع الرئيسية، نفذ ميزات رئيسية، وأشرف على المطورين الجدد.</p>
+        </div>
+
+        <div class="section">
+            <h3>المهارات</h3>
+            <p>JavaScript, HTML, CSS, React, Node.js</p>
+        </div>
+
+        <div class="section">
+            <a href="mailto:john.doe@example.com" class="btn">اتصل بي</a>
+        </div>
+
+        <div class="signature">
+            김철수
+        </div>
+
+        <div class="social-icons">
+            <a href="https://linkedin.com/in/johndoe" target="_blank">LinkedIn</a>
+            <a href="https://github.com/johndoe" target="_blank">GitHub</a>
+            <a href="https://twitter.com/johndoe" target="_blank">Twitter</a>
+        </div>
+    </div>
+
     <div class="footer">
         <span class="date-time" id="date-time"></span>
+        <span class="last-updated" id="last-updated"></span>
     </div>
 
     <script>
-        function updateDateTime() {
-            const now = new Date();
-            const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
-            const timeString = now.toLocaleTimeString('en-US', options);
-            const dateString = now.toDateString();
-            document.getElementById('date-time').textContent = `${dateString} ${timeString}`;
+        function toggleLanguage() {
+            const englishCV = document.querySelector('.container.english');
+            const arabicCV = document.querySelector('.container.arabic');
+            if (englishCV.style.display === 'none') {
+                englishCV.style.display = 'block';
+                arabicCV.style.display = 'none';
+            } else {
+
+
+                englishCV.style.display = 'none';
+                arabicCV.style.display = 'block';
+            }
         }
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
+
+        function updateTime() {
+            const now = new Date();
+            const dateTimeElement = document.getElementById('date-time');
+            const lastUpdatedElement = document.getElementById('last-updated');
+            dateTimeElement.innerText = now.toLocaleString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+
+            lastUpdatedElement.innerText = `Last updated: ${now.toLocaleDateString('en-US')} ${now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            })}`;
+        }
+
+        setInterval(updateTime, 1000);
+
+        // Set weather icon (example implementation)
+        document.getElementById('weather').innerHTML = '☀️'; // Replace with actual weather data for Khobar
+        document.getElementById('weather-arabic').innerHTML = '☀️'; // Replace with actual weather data for Khobar
     </script>
 </body>
 
