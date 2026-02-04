@@ -1,5 +1,6 @@
 #!/bin/bash
 # SinusBot installer by Philipp Eßwein - DAThosting.eu philipp.esswein@dathosting.eu
+# Modified: Removed NTP/chrony/timedatectl related code per request
 
 # Vars
 
@@ -621,19 +622,9 @@ fi
 magentaMessage "Installing necessary packages. Please wait..."
 
 if [[ -f /etc/centos-release ]]; then
-  yum -y -q install screen xvfb libxcursor1 ca-certificates bzip2 psmisc libglib2.0-0 less ntp python3 iproute which dbus libnss3 libegl1-mesa x11-xkb-utils libasound2 libxcomposite-dev libxi6 libpci3 libxslt1.1 libxkbcommon0 libxss1 >/dev/null
+  yum -y -q install screen xvfb libxcursor1 ca-certificates bzip2 psmisc libglib2.0-0 less python3 iproute which dbus libnss3 libegl1-mesa x11-xkb-utils libasound2 libxcomposite-dev libxi6 libpci3 libxslt1.1 libxkbcommon0 libxss1 >/dev/null
   update-ca-trust extract >/dev/null
 else
-# ---- DISABLED NTP / TIME SYNC ----
-# if [ "$OSRELEASE" == "18.04" ] && [ "$OS" == "ubuntu" ]; then
-#   apt-get -y install chrony
-# elif [ "$OSRELEASE" == "22.04" ] && [ "$OS" == "ubuntu" ]; then
-#   echo 'NTP=0.pool.ntp.org' >> /etc/systemd/timesyncd.conf && systemctl restart systemd-timesyncd.service
-# else
-#   apt-get -y install ntp
-# fi
-# ---------------------------------
-
   apt-get install -y -qq --no-install-recommends libfontconfig libxtst6 screen xvfb libxcursor1 ca-certificates bzip2 psmisc libglib2.0-0 less python3 iproute2 dbus libnss3 libegl1-mesa x11-xkb-utils libasound2 libxcomposite-dev libxi6 libpci3 libxslt1.1 libxkbcommon0 libxss1
   update-ca-certificates >/dev/null
 fi
@@ -653,9 +644,6 @@ fi
 fi
 
 greenMessage "Packages installed"!
-
-# Setting server time
-
 
 USERADD=$(which useradd)
 GROUPADD=$(which groupadd)
@@ -876,19 +864,11 @@ if [ "$INSTALL" == "Inst" ]; then
   fi
 fi
 
-#if [[ -f /etc/cron.d/sinusbot ]]; then
-#  redMessage "Cronjob already set for SinusBot updater"!
-#else
-#  greenMessage "Installing Cronjob for automatic SinusBot update..."
-#  echo "0 0 * * * $SINUSBOTUSER $LOCATION/sinusbot -update >/dev/null" >>/etc/cron.d/sinusbot
-#  greenMessage "Installing SinusBot update cronjob successful."
-#fi
-
 # Installing YT-DL.
 
 if [ "$YT" == "Yes" ]; then
   greenMessage "Installing YT-Downloader now"!
-  if [ "$(cat /etc/cron.d/ytdl)" == "0 0 * * * $SINUSBOTUSER youtube-dl -U --restrict-filename >/dev/null" ]; then
+  if [ -f /etc/cron.d/ytdl ] && [ "$(cat /etc/cron.d/ytdl)" == "0 0 * * * $SINUSBOTUSER youtube-dl -U --restrict-filename >/dev/null" ]; then
         rm /etc/cron.d/ytdl
         yellowMessage "Deleted old YT-DL cronjob. Generating new one in a second."
   fi
@@ -950,114 +930,4 @@ elif [ ! -a "$LOCATION/README_installer.txt" ] && [ "$USE_SYSTEMD" == false ]; t
   ##################################################################################' >>$LOCATION/README_installer.txt
 fi
 
-greenMessage "Generated README_installer.txt"!
-
-# Delete files if exists
-
-if [[ -f /tmp/.sinusbot.lock ]]; then
-  rm /tmp/.sinusbot.lock
-  greenMessage "Deleted /tmp/.sinusbot.lock"
-fi
-
-if [ -e /tmp/.X11-unix/X40 ]; then
-  rm /tmp/.X11-unix/X40
-  greenMessage "Deleted /tmp/.X11-unix/X40"
-fi
-
-# Starting SinusBot first time!
-
-if [ "$INSTALL" != "Updt" ]; then
-  greenMessage 'Starting the SinusBot. For first time.'
-  chown -R $SINUSBOTUSER:$SINUSBOTUSER $LOCATION
-  cd $LOCATION
-
-  # Password variable
-
-  export Q=$(su $SINUSBOTUSER -c './sinusbot --initonly')
-  password=$(export | awk '/password/{ print $10 }' | tr -d "'")
-  if [ -z "$password" ]; then
-    errorExit "Failed to read password, try a reinstall again."
-  fi
-
-  chown -R $SINUSBOTUSER:$SINUSBOTUSER $LOCATION
-
-  # Starting bot
-  greenMessage "Starting SinusBot again."
-fi
-
-if [[ "$USE_SYSTEMD" == true ]]; then
-  service sinusbot start
-elif [[ "$USE_SYSTEMD" == false ]]; then
-  /etc/init.d/sinusbot start
-fi
-yellowMessage "Please wait... This will take some seconds"!
-chown -R $SINUSBOTUSER:$SINUSBOTUSER $LOCATION
-
-if [[ "$USE_SYSTEMD" == true ]]; then
-  sleep 5
-elif [[ "$USE_SYSTEMD" == false ]]; then
-  sleep 10
-fi
-
-if [[ -f /etc/centos-release ]]; then
-  if [ "$FIREWALL" == "ip" ]; then
-    iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 8087 -j ACCEPT
-  elif [ "$FIREWALL" == "fs" ]; then
-    if rpm -q --quiet firewalld; then
-      zone=$(firewall-cmd --get-active-zones | awk '{print $1; exit}')
-      firewall-cmd --zone=$zone --add-port=8087/tcp --permanent >/dev/null
-      firewall-cmd --reload >/dev/null
-    fi
-  fi
-fi
-
-# If startup failed, the script will start normal sinusbot without screen for looking about errors. If startup successed => installation done.
-IS_RUNNING=false
-if [[ "$USE_SYSTEMD" == true ]]; then
-  if [[ $(systemctl is-active sinusbot >/dev/null && echo UP || echo DOWN) == "UP" ]]; then
-    IS_RUNNING=true
-  fi
-elif [[ "$USE_SYSTEMD" == false ]]; then
-  if [[ $(/etc/init.d/sinusbot status | awk '{print $NF; exit}') == "UP" ]]; then
-     IS_RUNNING=true
-  fi
-fi
-
-if [[ "$IS_RUNNING" == true ]]; then
-  if [[ $INSTALL == "Inst" ]]; then
-    greenMessage "Install done"!
-  elif [[ $INSTALL == "Updt" ]]; then
-    greenMessage "Update done"!
-  fi
-
-  if [[ ! -f $LOCATION/README_installer.txt ]]; then
-    yellowMessage "Generated a README_installer.txt in $LOCATION with all commands for the sinusbot..."
-  fi
-
-  if [[ $INSTALL == "Updt" ]]; then
-    if [[ -f /lib/systemd/system/sinusbot.service ]]; then
-      service sinusbot restart
-      greenMessage "Restarted your bot with systemd."
-    fi
-    if [[ -f /etc/init.d/sinusbot ]]; then
-      /etc/init.d/sinusbot restart
-      greenMessage "Restarted your bot with initd."
-    fi
-    greenMessage "All right. Everything is updated successfully. SinusBot is UP on '$ipaddress:8087' :)"
-  else
-    greenMessage "All right. Everything is installed successfully. SinusBot is UP on '$ipaddress:8087' :) Your user = 'admin' and password = '$password'"
-  fi
-  if [[ "$USE_SYSTEMD" == true ]]; then
-    redMessage 'Stop it with "service sinusbot stop".'
-  elif [[ "$USE_SYSTEMD" == false ]]; then
-    redMessage 'Stop it with "/etc/init.d/sinusbot stop".'
-  fi
-  magentaMessage "Don't forget to rate this script on: https://forum.sinusbot.com/resources/sinusbot-installer-script.58/"
-  greenMessage "Thank you for using this script! :)"
-
-else
-  redMessage "SinusBot could not start! Starting it directly. Look for errors"!
-  su -c "$LOCATION/sinusbot" $SINUSBOTUSER
-fi
-
-exit 0
+greenMessage "Installation script finished."
