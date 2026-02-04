@@ -1,15 +1,14 @@
 #!/bin/bash
-# SinusBot installer by Philipp Eßwein - Modified by Copilot
-# Version 1.5-custom-fixed
-# Changes: Use custom SinusBot release and custom TeamSpeak client URL; various robustness and bug fixes.
+# SinusBot installer by Philipp Eßwein - Modified
+# Version 1.5-custom-fixed2
+# Changes: custom SinusBot release, custom TeamSpeak client URL, robustness and bug fixes.
 
 set -o errexit
 set -o pipefail
 set -o nounset
 
-# Vars
 MACHINE=$(uname -m)
-Instversion="1.5-custom-fixed"
+Instversion="1.5-custom-fixed2"
 USE_SYSTEMD=true
 RETRY_WGET="--tries=3 --timeout=20 --waitretry=3 -q"
 
@@ -20,21 +19,9 @@ cyanMessage() { echo -e "\033[36;1m${*}\033[0m"; }
 redMessage() { echo -e "\033[31;1m${*}\033[0m"; }
 yellowMessage() { echo -e "\033[33;1m${*}\033[0m"; }
 
-errorExit() {
-  redMessage "${*}"
-  exit 1
-}
-
-errorContinue() {
-  redMessage "Invalid option."
-  return
-}
-
-makeDir() {
-  if [ -n "${1:-}" ] && [ ! -d "$1" ]; then
-    mkdir -p "$1"
-  fi
-}
+errorExit() { redMessage "${*}"; exit 1; }
+errorContinue() { redMessage "Invalid option."; return; }
+makeDir() { if [ -n "${1:-}" ] && [ ! -d "$1" ]; then mkdir -p "$1"; fi; }
 
 err_report() {
   local lineno="$1"
@@ -48,7 +35,7 @@ if [ "$(id -u)" != "0" ]; then
   errorExit "Change to root account required!"
 fi
 
-# Basic package tools present
+# Ensure wget or curl present
 if ! command -v wget >/dev/null 2>&1 && ! command -v curl >/dev/null 2>&1; then
   errorExit "wget or curl is required. Please install one of them and re-run."
 fi
@@ -67,7 +54,7 @@ if ! command -v systemctl >/dev/null 2>&1; then
   USE_SYSTEMD=false
 fi
 
-# Kernel check: require major kernel >= 3
+# Kernel check
 KERNEL_MAJOR=$(uname -r | cut -d. -f1)
 if ! [[ "$KERNEL_MAJOR" =~ ^[0-9]+$ ]] || [ "$KERNEL_MAJOR" -lt 3 ]; then
   errorExit "Linux kernel unsupported. Update kernel before. Or change hardware."
@@ -107,9 +94,10 @@ case "$OPTION" in
   *) errorExit "Unknown option" ;;
 esac
 
-# PW Reset
+# --- Robust PW Reset block ---
 if [[ $INSTALL == "Res" ]]; then
   yellowMessage "Automatic usage or own directories?"
+
   OPTIONS=("Automatic" "Own path" "Quit")
   select OPTION in "${OPTIONS[@]}"; do
     case "$REPLY" in
@@ -132,42 +120,63 @@ if [[ $INSTALL == "Res" ]]; then
     done
   fi
 
-  LOCATIONex=$LOCATION/sinusbot
+  LOCATIONex="$LOCATION/sinusbot"
 
-  if [[ ! -f $LOCATION/sinusbot ]]; then
-    errorExit "SinusBot wasn't found at $LOCATION. Exiting script."
+  if [[ ! -f "$LOCATIONex" ]]; then
+    errorExit "SinusBot binary wasn't found at $LOCATIONex. Exiting script."
   fi
 
   PW=$(tr -dc 'a-zA-Z0-9' </dev/urandom | fold -w 12 | head -n 1)
-  SINUSBOTUSER=$(ls -ld "$LOCATION" | awk '{print $3}')
-
-  greenMessage "Please login to your SinusBot webinterface as admin and use password: $PW"
-  yellowMessage "After that change your password under Settings->User Accounts->admin->Edit."
-
-  # Stop service if running
-  if [[ -f /lib/systemd/system/sinusbot.service || -f /etc/systemd/system/sinusbot.service ]]; then
-    if systemctl is-active --quiet sinusbot; then
-      systemctl stop sinusbot || true
-    fi
-  elif [[ -f /etc/init.d/sinusbot ]]; then
-    if /etc/init.d/sinusbot status >/dev/null 2>&1; then
-      /etc/init.d/sinusbot stop || true
-    fi
+  SINUSBOTUSER=$(ls -ld "$LOCATION" 2>/dev/null | awk '{print $3}' || true)
+  if [ -z "$SINUSBOTUSER" ]; then
+    SINUSBOTUSER=$(stat -c '%U' "$LOCATION" 2>/dev/null || true)
+  fi
+  if [ -z "$SINUSBOTUSER" ]; then
+    errorExit "Could not determine SinusBot user owning $LOCATION. Aborting."
   fi
 
-  log="/tmp/sinusbot.log.$$"
+  greenMessage "Please login to your SinusBot webinterface as admin and use password: $PW"
+  yellowMessage "After that change your password under Settings->User Accounts->admin->Edit. The script will restart the bot."
+
+  # Stop service if running
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet sinusbot; then
+    systemctl stop sinusbot || true
+  elif [[ -f /etc/init.d/sinusbot ]]; then
+    /etc/init.d/sinusbot stop >/dev/null 2>&1 || true
+  fi
+
+  log="/tmp/sinusbot.pwreset.$$.log"
   match="USER-PATCH [admin] (admin) OK"
 
-  su -s /bin/bash -c "\"$LOCATIONex\" --override-password \"$PW\" >\"$log\" 2>&1 &" "$SINUSBOTUSER" || true
-  sleep 3
+  # Start the bot as the bot user and redirect output to log
+  if command -v runuser >/dev/null 2>&1; then
+    runuser -u "$SINUSBOTUSER" -- bash -c "\"$LOCATIONex\" --override-password \"$PW\" >\"$log\" 2>&1 & echo \$!" >/tmp/sinusbot.pid.$$ || true
+  else
+    su - "$SINUSBOTUSER" -s /bin/bash -c "\"$LOCATIONex\" --override-password \"$PW\" >\"$log\" 2>&1 & echo \$!" >/tmp/sinusbot.pid.$$ || true
+  fi
 
-  while true; do
-    echo -ne '(Waiting for password change!)\r'
+  if [ -f /tmp/sinusbot.pid.$$ ]; then
+    BOTPID=$(cat /tmp/sinusbot.pid.$$ 2>/dev/null || true)
+    rm -f /tmp/sinusbot.pid.$$
+  else
+    BOTPID=""
+  fi
+
+  sleep 2
+
+  SECONDS_WAITED=0
+  TIMEOUT=60
+  while [ $SECONDS_WAITED -lt $TIMEOUT ]; do
+    echo -ne "(Waiting for password change... ${SECONDS_WAITED}s)\r"
     if [ -f "$log" ] && grep -Fq "$match" "$log"; then
-      pkill -f "$LOCATIONex" || true
+      greenMessage "Password change detected in log."
+      if [ -n "$BOTPID" ]; then
+        kill -INT "$BOTPID" >/dev/null 2>&1 || true
+      else
+        pkill -f -- "$LOCATIONex" >/dev/null 2>&1 || true
+      fi
       rm -f "$log"
-      greenMessage "Successfully changed your admin password."
-      if systemctl list-unit-files | grep -q sinusbot; then
+      if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q sinusbot; then
         systemctl start sinusbot || true
         greenMessage "Started your bot with systemd."
       elif [[ -f /etc/init.d/sinusbot ]]; then
@@ -179,8 +188,14 @@ if [[ $INSTALL == "Res" ]]; then
       exit 0
     fi
     sleep 1
+    SECONDS_WAITED=$((SECONDS_WAITED+1))
   done
+
+  redMessage "Timeout waiting for password-change confirmation. Check $log for details."
+  [ -f "$log" ] && sed -n '1,200p' "$log"
+  exit 1
 fi
+# --- End PW Reset block ---
 
 # OS specific preps
 if [ "$INSTALL" != "Rem" ]; then
@@ -206,13 +221,11 @@ if [ "$INSTALL" != "Rem" ]; then
     greenMessage "Done"
   fi
 
-  # Functions from lsb_release
   OS=$(lsb_release -i 2>/dev/null | awk -F: '{print tolower($2)}' | xargs || true)
   OSBRANCH=$(lsb_release -c 2>/dev/null | awk -F: '{print $2}' | xargs || true)
   OSRELEASE=$(lsb_release -r 2>/dev/null | awk -F: '{print $2}' | xargs || true)
   VIRTUALIZATION_TYPE=""
 
-  # detect docker/openvz
   if [[ -f "/.dockerenv" || -f "/.dockerinit" ]]; then
     VIRTUALIZATION_TYPE="docker"
   fi
@@ -349,11 +362,9 @@ if [ "$INSTALL" == "Rem" ]; then
     esac
   done
 
-  # Kill running processes
   pkill -f sinusbot || true
   pkill -f ts3client || true
 
-  # Remove service files
   if systemctl list-unit-files | grep -q sinusbot; then
     systemctl stop sinusbot || true
     systemctl disable sinusbot || true
@@ -442,16 +453,15 @@ if [ "$UPDATE_SYS" == "Yes" ]; then
   fi
 fi
 
-# TeamSpeak3-Client latest check and download
+# TeamSpeak3-Client download/install (custom URL requested)
 if [ "${DISCORD:-false}" == "false" ]; then
   greenMessage "Preparing TeamSpeak client for hardware type $MACHINE with arch $ARCH."
 
-  # Use the user-provided TeamSpeak client URL (requested)
   TS_DOWNLOAD_URL="https://github.com/tkrlot/Tkrtest/releases/download/sinus/TeamSpeak3-Client-linux_amd64-3.5.6.run"
   TS_RUNFILE="TeamSpeak3-Client-linux_${ARCH}-3.5.6.run"
 
   makeDir "$LOCATION/teamspeak3-client"
-  chmod 750 -R "$LOCATION"
+  chmod 750 -R "$LOCATION" || true
   chown -R "${SINUSBOTUSER:-root}:${SINUSBOTUSER:-root}" "$LOCATION" || true
   cd "$LOCATION/teamspeak3-client" || true
 
@@ -466,12 +476,10 @@ if [ "${DISCORD:-false}" == "false" ]; then
     errorExit "TeamSpeak client download failed! Exiting now"
   fi
 
-  # Make executable and run installer non-interactively if possible
   chmod +x "$TS_RUNFILE"
   greenMessage "Installing the TS3 client. You may be prompted to accept the EULA interactively."
   su -s /bin/bash -c "./$TS_RUNFILE" "${SINUSBOTUSER:-root}" || true
 
-  # Move extracted files into place if installer created a directory
   if [ -d TeamSpeak3-Client-linux_${ARCH} ]; then
     cp -R TeamSpeak3-Client-linux_${ARCH}/* . || true
     rm -f ts3client_runscript.sh || true
@@ -586,7 +594,6 @@ if [ "$EXTRACT_OK" != "true" ]; then
         rm -f "$TMP_UNBZ"
       fi
     else
-      # treat as single binary
       mv "$TMP_UNBZ" "$LOCATION/sinusbot" 2>/dev/null || su -s /bin/bash -c "mv \"$TMP_UNBZ\" \"$LOCATION/sinusbot\"" "${SINUSBOTUSER:-root}" 2>/dev/null
       chmod 755 "$LOCATION/sinusbot" 2>/dev/null || su -s /bin/bash -c "chmod 755 \"$LOCATION/sinusbot\"" "${SINUSBOTUSER:-root}" 2>/dev/null
       EXTRACT_OK=true
@@ -624,7 +631,6 @@ fi
 # Install start script
 if [[ "$USE_SYSTEMD" == true ]]; then
   greenMessage "Starting systemd installation"
-  # prefer /etc/systemd/system for local admin edits
   SD_PATH="/etc/systemd/system/sinusbot.service"
   if systemctl list-unit-files | grep -q sinusbot; then
     systemctl stop sinusbot || true
@@ -708,11 +714,11 @@ EOF
   fi
 fi
 
-# Installing YT-DL / yt-dlp
+# Installing yt-dlp
 if [ "$YT" == "Yes" ]; then
   greenMessage "Installing yt-dlp now"
-  if [ -f /etc/cron.d/ytdl ] && grep -q 'youtube' /etc/cron.d/ytdl; then
-    redMessage "Cronjob already set for YT-DL updater"
+  if [ -f /etc/cron.d/ytdl ] && grep -q 'yt-dlp' /etc/cron.d/ytdl; then
+    redMessage "Cronjob already set for yt-dlp updater"
   else
     greenMessage "Installing Cronjob for automatic yt-dlp update..."
     echo "0 0 * * * ${SINUSBOTUSER} PATH=\$PATH:/usr/local/bin; yt-dlp -U --restrict-filenames >/dev/null 2>&1" > /etc/cron.d/ytdl
