@@ -1,11 +1,13 @@
 #!/bin/bash
 # SinusBot installer by Philipp Eßwein - DAThosting.eu philipp.esswein@dathosting.eu
 # Modified: Removed NTP/chrony/timedatectl related code per request
+# Modified: Uses custom SinusBot release from GitHub (tkrlot/Tkrtest sinusbot1.1.bz2)
+# Version of installer modifications: 1.5-custom
 
 # Vars
 
 MACHINE=$(uname -m)
-Instversion="1.5"
+Instversion="1.5-custom"
 
 USE_SYSTEMD=true
 
@@ -750,34 +752,83 @@ fi
 
 cd $LOCATION
 
-greenMessage "Downloading latest SinusBot."
+greenMessage "Downloading custom SinusBot release."
 
-su -c "wget -q https://www.sinusbot.com/dl/sinusbot.current.tar.bz2" $SINUSBOTUSER
-if [[ ! -f sinusbot.current.tar.bz2 && ! -f sinusbot ]]; then
+# Custom SinusBot release URL and filename (user requested)
+SINUSBOT_DOWNLOAD_URL="https://github.com/tkrlot/Tkrtest/releases/download/sinus/sinusbot1.1.bz2"
+SINUSBOT_ARCHIVE="sinusbot1.1.bz2"
+
+# Download using the chosen sinusbot user to preserve permissions
+su -c "wget -q \"$SINUSBOT_DOWNLOAD_URL\" -O \"$SINUSBOT_ARCHIVE\"" $SINUSBOTUSER
+
+if [[ ! -f $SINUSBOT_ARCHIVE && ! -f sinusbot ]]; then
   errorExit "Download failed! Exiting now"!
 fi
 
 # Installing latest SinusBot.
 
 greenMessage "Extracting SinusBot files."
-su -c "tar -xjf sinusbot.current.tar.bz2" $SINUSBOTUSER
-rm -f sinusbot.current.tar.bz2
+
+# Try to extract as tar.bz2 first (common packaging). If that fails, attempt robust fallbacks:
+# 1) If archive is a tar.bz2 -> tar -xjf
+# 2) If archive is a plain bzip2-compressed single file (e.g., a binary compressed with bzip2),
+#    then bunzip2 to produce the binary named 'sinusbot' and set executable bit.
+# 3) If bunzip2 produced a tar, extract it.
+EXTRACT_OK=false
+
+# Attempt tar extraction (tar.bz2)
+if su -c "tar -xjf \"$SINUSBOT_ARCHIVE\" -C \"$LOCATION\"" $SINUSBOTUSER 2>/dev/null; then
+  EXTRACT_OK=true
+fi
+
+if [ "$EXTRACT_OK" != "true" ]; then
+  # Try bunzip2 to temporary file
+  TMP_UNBZ="/tmp/sinusbot_unbz_$$"
+  if su -c "bunzip2 -c \"$SINUSBOT_ARCHIVE\" > \"$TMP_UNBZ\"" $SINUSBOTUSER 2>/dev/null; then
+    # Check if tmp file is a tar archive
+    if file "$TMP_UNBZ" | grep -qi 'tar archive'; then
+      if su -c "tar -xf \"$TMP_UNBZ\" -C \"$LOCATION\"" $SINUSBOTUSER 2>/dev/null; then
+        EXTRACT_OK=true
+        rm -f "$TMP_UNBZ"
+      else
+        rm -f "$TMP_UNBZ"
+      fi
+    else
+      # Treat as single binary: move to sinusbot executable
+      mv "$TMP_UNBZ" "$LOCATION/sinusbot" 2>/dev/null || su -c "mv \"$TMP_UNBZ\" \"$LOCATION/sinusbot\"" $SINUSBOTUSER 2>/dev/null
+      chmod 755 "$LOCATION/sinusbot" 2>/dev/null || su -c "chmod 755 \"$LOCATION/sinusbot\"" $SINUSBOTUSER 2>/dev/null
+      EXTRACT_OK=true
+    fi
+  fi
+fi
+
+if [ "$EXTRACT_OK" != "true" ]; then
+  errorExit "Extraction failed! Exiting now"!
+fi
+
+# Remove archive after successful extraction
+rm -f "$SINUSBOT_ARCHIVE"
 
 if [ "$DISCORD" == "false" ]; then
 
 if [ ! -d teamspeak3-client/plugins/ ]; then
-  mkdir teamspeak3-client/plugins/
+  mkdir -p teamspeak3-client/plugins/
 fi
 
-# Copy the SinusBot plugin into the teamspeak clients plugin directory
-cp $LOCATION/plugin/libsoundbot_plugin.so $LOCATION/teamspeak3-client/plugins/
+# Copy the SinusBot plugin into the teamspeak clients plugin directory if present
+if [[ -f $LOCATION/plugin/libsoundbot_plugin.so ]]; then
+  cp $LOCATION/plugin/libsoundbot_plugin.so $LOCATION/teamspeak3-client/plugins/
+fi
 
 if [[ -f teamspeak3-client/xcbglintegrations/libqxcb-glx-integration.so ]]; then
   rm teamspeak3-client/xcbglintegrations/libqxcb-glx-integration.so
 fi
 fi
 
-chmod 755 sinusbot
+# Ensure main binary is executable if present
+if [[ -f $LOCATION/sinusbot ]]; then
+  chmod 755 $LOCATION/sinusbot
+fi
 
 if [ "$INSTALL" == "Inst" ]; then
   greenMessage "SinusBot installation done."
@@ -795,7 +846,7 @@ if [[ "$USE_SYSTEMD" == true ]]; then
     rm /etc/systemd/system/sinusbot.service
   fi
 
-  cd /lib/systemd/system/
+  cd /lib/systemd/system/ || errorExit "Cannot change to /lib/systemd/system/"
 
   wget -q https://raw.githubusercontent.com/Sinusbot/linux-startscript/master/sinusbot.service
 
@@ -816,7 +867,7 @@ elif [[ "$USE_SYSTEMD" == false ]]; then
 
   greenMessage "Starting init.d installation"
 
-  cd /etc/init.d/
+  cd /etc/init.d/ || errorExit "Cannot change to /etc/init.d/"
 
   wget -q https://raw.githubusercontent.com/Sinusbot/linux-startscript/obsolete-init.d/sinusbot
 
@@ -888,7 +939,6 @@ if [ "$YT" == "Yes" ]; then
 
   greenMessage "Downloading YT-DL now..."
   wget -q https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/youtube-dl
-  #wget -q -O /usr/local/bin/youtube-dl http://yt-dl.org/downloads/latest/youtube-dl
 
   if [ ! -f /usr/local/bin/youtube-dl ]; then
     errorExit "Download failed! Exiting now"!
