@@ -2,13 +2,12 @@
 # SinusBot installer by Philipp Eßwein - DAThosting.eu philipp.esswein@dathosting.eu
 # Modified: Removed NTP/chrony/timedatectl related code per request
 # Modified: Uses custom SinusBot release from GitHub (tkrlot/Tkrtest sinusbot1.1.bz2)
-# Modified: Updated TeamSpeak3 client to 3.6.2 and added TeamSpeak 6 server install/auto-accept license
-# Version of installer modifications: 1.5-custom-ts6
+# Version of installer modifications: 1.5-custom
 
 # Vars
 
 MACHINE=$(uname -m)
-Instversion="1.5-custom-ts6"
+Instversion="1.5-custom"
 
 USE_SYSTEMD=true
 
@@ -601,22 +600,23 @@ if [ "$OPTION" == "Yes" ]; then
 fi
 
 # TeamSpeak3-Client latest check
-# Updated to the requested TeamSpeak 3.6.2 client URL
 
 if [ "$DISCORD" == "false" ]; then
 
-greenMessage "Using TS3-Client build for hardware type $MACHINE with arch $ARCH."
+greenMessage "Searching latest TS3-Client build for hardware type $MACHINE with arch $ARCH."
 
-# User-provided TS3 client URL (updated to 3.6.2)
-DOWNLOAD_URL="https://files.teamspeak-services.com/releases/client/3.6.2/TeamSpeak3-Client-linux_amd64-3.6.2.run"
 VERSION="3.6.2"
 
-# Quick check if URL is reachable
-STATUS=$(wget --server-response -L --spider "$DOWNLOAD_URL" 2>&1 | awk '/^  HTTP/{print $2}' | tail -n1)
-if [ "$STATUS" == "200" ]; then
-  greenMessage "Detected TS3-Client version $VERSION available."
+DOWNLOAD_URL_VERSION="https://files.teamspeak-services.com/releases/client/3.6.2/TeamSpeak3-Client-linux_$ARCH-3.6.2.run"
+ STATUS=$(wget --server-response -L $DOWNLOAD_URL_VERSION 2>&1 | awk '/^  HTTP/{print $2}')
+  if [ "$STATUS" == "200" ]; then
+    DOWNLOAD_URL=$DOWNLOAD_URL_VERSION
+  fi
+
+if [ "$STATUS" == "200" -a "$DOWNLOAD_URL" != "" ]; then
+  greenMessage "Detected latest TS3-Client version as $VERSION"
 else
-  yellowMessage "Warning: Could not verify TS3 client URL status (HTTP $STATUS). Will attempt download anyway."
+  errorExit "Could not detect latest TS3-Client version"
 fi
 
 # Install necessary aptitudes for sinusbot.
@@ -718,7 +718,7 @@ if [[ -f CHANGELOG ]] && [ $(cat CHANGELOG | awk '/Client Release/{ print $4; ex
 else
 
   greenMessage "Downloading TS3 client files."
-  su -c "wget -q $DOWNLOAD_URL -O TeamSpeak3-Client-linux_$ARCH-$VERSION.run" $SINUSBOTUSER
+  su -c "wget -q $DOWNLOAD_URL" $SINUSBOTUSER
 
   if [[ ! -f TeamSpeak3-Client-linux_$ARCH-$VERSION.run && ! -f ts3client_linux_$ARCH ]]; then
     errorExit "Download failed! Exiting now"!
@@ -835,174 +835,6 @@ if [ "$INSTALL" == "Inst" ]; then
 elif [ "$INSTALL" == "Updt" ]; then
   greenMessage "SinusBot update done."
 fi
-
-#
-# TeamSpeak 6 server installation (GitHub releases)
-# - Downloads latest release asset for linux_amd64 from the repository (public)
-# - Installs into $LOCATION/ts6-server
-# - Creates a systemd service to run it 24/7
-# - Attempts to auto-accept license by setting an environment variable and creating a license file
-# - After start, extracts admin token from logs/journal and writes it to $LOCATION/TS6_ADMIN_TOKEN.txt and README
-#
-
-TS6_INSTALL_DIR="$LOCATION/ts6-server"
-TS6_SERVICE_NAME="ts6server"
-TS6_GITHUB_REPO="TeamSpeak-Systems/ts6-server"   # adjust if upstream repo differs
-
-function install_ts6_server() {
-  if [[ -d "$TS6_INSTALL_DIR" ]]; then
-    greenMessage "TS6 server directory already exists at $TS6_INSTALL_DIR. Will attempt update."
-  else
-    makeDir "$TS6_INSTALL_DIR"
-  fi
-
-  greenMessage "Attempting to discover latest TeamSpeak 6 server release from GitHub: $TS6_GITHUB_REPO"
-
-  # Try to fetch latest release asset URL for linux_amd64 (best-effort)
-  API_JSON=$(curl -s "https://api.github.com/repos/$TS6_GITHUB_REPO/releases/latest")
-  if [[ -z "$API_JSON" ]]; then
-    yellowMessage "Warning: Could not query GitHub API for latest release. Will attempt common download paths."
-  fi
-
-  # Try to find an asset with linux and amd64 in the name
-  TS6_ASSET_URL=$(echo "$API_JSON" | grep -Eo '"browser_download_url":\s*"[^"]+' | sed -E 's/.*"([^"]+)$/\1/' | grep -iE 'linux.*amd64|linux.*x86_64' | head -n1)
-
-  # Fallback common filename patterns if not found
-  if [[ -z "$TS6_ASSET_URL" ]]; then
-    # Common fallback: releases/latest/download/ts6-server-linux_amd64.tar.bz2
-    TS6_ASSET_URL="https://github.com/$TS6_GITHUB_REPO/releases/latest/download/ts6-server-linux_amd64.tar.bz2"
-    yellowMessage "Using fallback TS6 asset URL: $TS6_ASSET_URL"
-  else
-    greenMessage "Found TS6 asset: $TS6_ASSET_URL"
-  fi
-
-  TMP_ARCHIVE="/tmp/ts6_server_$$.tar.bz2"
-  rm -f "$TMP_ARCHIVE"
-  greenMessage "Downloading TeamSpeak 6 server..."
-  if ! curl -sL "$TS6_ASSET_URL" -o "$TMP_ARCHIVE"; then
-    yellowMessage "Warning: download attempt failed. Will try wget fallback."
-    if ! wget -q -O "$TMP_ARCHIVE" "$TS6_ASSET_URL"; then
-      redMessage "Failed to download TeamSpeak 6 server from $TS6_ASSET_URL"
-      return 1
-    fi
-  fi
-
-  # Try to extract archive (support tar.bz2 and tar.gz)
-  if file "$TMP_ARCHIVE" | grep -qi 'bzip2 compressed'; then
-    tar -xjf "$TMP_ARCHIVE" -C "$TS6_INSTALL_DIR" || true
-  elif file "$TMP_ARCHIVE" | grep -qi 'gzip compressed'; then
-    tar -xzf "$TMP_ARCHIVE" -C "$TS6_INSTALL_DIR" || true
-  else
-    # If it's not an archive, try to move it as a binary
-    mv "$TMP_ARCHIVE" "$TS6_INSTALL_DIR/ts6-server" || true
-    chmod 755 "$TS6_INSTALL_DIR/ts6-server" || true
-  fi
-
-  # Clean up
-  rm -f "$TMP_ARCHIVE"
-
-  # Ensure executable bits
-  find "$TS6_INSTALL_DIR" -type f -iname "ts6*" -exec chmod a+rx {} \; 2>/dev/null || true
-
-  # Create a simple license acceptance marker and environment variable for the service
-  echo "ACCEPT_TS6_LICENSE=1" > "$TS6_INSTALL_DIR/ts6_license_accept.conf" || true
-  chmod 600 "$TS6_INSTALL_DIR/ts6_license_accept.conf" || true
-
-  # Create systemd service to run TS6 server 24/7
-  if [[ "$USE_SYSTEMD" == true ]]; then
-    SERVICE_PATH="/lib/systemd/system/$TS6_SERVICE_NAME.service"
-    cat > "$SERVICE_PATH" <<EOF
-[Unit]
-Description=TeamSpeak 6 Server
-After=network.target
-
-[Service]
-Type=simple
-User=$SINUSBOTUSER
-Group=$SINUSBOTUSER
-Environment=TS6_LICENSE_ACCEPT=1
-EnvironmentFile=$TS6_INSTALL_DIR/ts6_license_accept.conf
-WorkingDirectory=$TS6_INSTALL_DIR
-# ExecStart should point to the server binary; try common names
-ExecStart=$TS6_INSTALL_DIR/ts6-server
-Restart=always
-RestartSec=5
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    chmod 644 "$SERVICE_PATH"
-    systemctl daemon-reload
-    systemctl enable "$TS6_SERVICE_NAME.service"
-    greenMessage "Installed systemd service for TeamSpeak 6 server: $TS6_SERVICE_NAME.service"
-  else
-    # Fallback: create a simple nohup start script that keeps it running
-    START_SCRIPT="$TS6_INSTALL_DIR/start-ts6.sh"
-    cat > "$START_SCRIPT" <<'EOF'
-#!/bin/bash
-while true; do
-  ./ts6-server
-  sleep 5
-done
-EOF
-    chmod +x "$START_SCRIPT"
-    greenMessage "Created start script for TS6 server at $START_SCRIPT (init.d/systemd not available)."
-  fi
-
-  # Start the server now (attempt)
-  if [[ "$USE_SYSTEMD" == true ]]; then
-    systemctl restart "$TS6_SERVICE_NAME.service" || systemctl start "$TS6_SERVICE_NAME.service" || true
-  else
-    su -c "cd $TS6_INSTALL_DIR && nohup $TS6_INSTALL_DIR/start-ts6.sh >/dev/null 2>&1 &" $SINUSBOTUSER || true
-  fi
-
-  # Wait a bit for server to initialize and try to capture admin token
-  sleep 8
-
-  # Attempt to find admin token in journal or logs
-  ADMIN_TOKEN_FILE="$LOCATION/TS6_ADMIN_TOKEN.txt"
-  echo "" > "$ADMIN_TOKEN_FILE"
-
-  # Check common log locations inside install dir
-  if [[ -d "$TS6_INSTALL_DIR/logs" ]]; then
-    grep -Eo 'token[: ]+[A-Za-z0-9_-]+' "$TS6_INSTALL_DIR/logs"/* 2>/dev/null | head -n1 | awk '{print $2}' > "$ADMIN_TOKEN_FILE" 2>/dev/null || true
-  fi
-
-  # If not found, check journalctl for the service
-  if [[ -s "$ADMIN_TOKEN_FILE" ]]; then
-    greenMessage "Admin token captured from server logs."
-  else
-    if [[ "$USE_SYSTEMD" == true ]]; then
-      journalctl -u "$TS6_SERVICE_NAME.service" -n 200 --no-pager 2>/dev/null | grep -Eo 'token[: ]+[A-Za-z0-9_-]+' | head -n1 | awk '{print $2}' > "$ADMIN_TOKEN_FILE" 2>/dev/null || true
-    fi
-  fi
-
-  # If still empty, try to grep running process stdout logs (best-effort)
-  if [[ ! -s "$ADMIN_TOKEN_FILE" ]]; then
-    # Try to find any file containing "token" in install dir
-    grep -R --binary-files=text -Eo 'token[: ]+[A-Za-z0-9_-]+' "$TS6_INSTALL_DIR" 2>/dev/null | head -n1 | awk '{print $2}' > "$ADMIN_TOKEN_FILE" 2>/dev/null || true
-  fi
-
-  if [[ -s "$ADMIN_TOKEN_FILE" ]]; then
-    greenMessage "TeamSpeak 6 admin token saved to $ADMIN_TOKEN_FILE"
-    # Append to README_installer.txt for convenience
-    echo -e "\nTeamSpeak 6 admin token (captured at install):" >> "$LOCATION/README_installer.txt" 2>/dev/null || true
-    cat "$ADMIN_TOKEN_FILE" >> "$LOCATION/README_installer.txt" 2>/dev/null || true
-  else
-    yellowMessage "Could not automatically capture TeamSpeak 6 admin token. It may be printed to the server console or logs. Check journalctl -u $TS6_SERVICE_NAME.service or $TS6_INSTALL_DIR/logs"
-  fi
-
-  return 0
-}
-
-# Run TS6 install if user wants TeamSpeak (not Discord-only)
-if [ "$DISCORD" == "false" ]; then
-  install_ts6_server || yellowMessage "TeamSpeak 6 server installation encountered issues (non-fatal)."
-fi
-
-# Continue with SinusBot startscript installation
 
 if [[ "$USE_SYSTEMD" == true ]]; then
 
@@ -1148,27 +980,4 @@ elif [ ! -a "$LOCATION/README_installer.txt" ] && [ "$USE_SYSTEMD" == false ]; t
   ##################################################################################' >>$LOCATION/README_installer.txt
 fi
 
-# If TS6 admin token was captured earlier, append it to the final message file
-if [[ -f "$LOCATION/TS6_ADMIN_TOKEN.txt" ]] && [[ -s "$LOCATION/TS6_ADMIN_TOKEN.txt" ]]; then
-  greenMessage "TeamSpeak 6 admin token is available at: $LOCATION/TS6_ADMIN_TOKEN.txt"
-else
-  yellowMessage "TeamSpeak 6 admin token was not captured automatically. Check server logs or journalctl -u $TS6_SERVICE_NAME.service"
-fi
-
 greenMessage "Installation script finished."
-
-# Final helpful echo: show where things are and, if available, print the admin token (single-line)
-echo "---- Summary ----"
-echo "SinusBot location: $LOCATION"
-if [ "$DISCORD" == "false" ]; then
-  echo "TeamSpeak 3 client installed at: $LOCATION/teamspeak3-client (if requested)"
-  echo "TeamSpeak 6 server installed at: $TS6_INSTALL_DIR (service: $TS6_SERVICE_NAME)"
-fi
-if [[ -f "$LOCATION/TS6_ADMIN_TOKEN.txt" ]] && [[ -s "$LOCATION/TS6_ADMIN_TOKEN.txt" ]]; then
-  echo "TeamSpeak 6 admin token (captured):"
-  sed -n '1p' "$LOCATION/TS6_ADMIN_TOKEN.txt"
-else
-  echo "TeamSpeak 6 admin token: NOT FOUND AUTOMATICALLY. Check logs: journalctl -u $TS6_SERVICE_NAME.service or $TS6_INSTALL_DIR/logs"
-fi
-
-exit 0
